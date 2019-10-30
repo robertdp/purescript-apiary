@@ -1,0 +1,29 @@
+{
+  "name": "purescript-cretin",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "purescript": "^0.13.4",
+    "purescript-psa": "^0.7.3",
+    "purty": "^4.5.1",
+    "spago": "^0.10.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/robertdp/purescript-cretin.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/robertdp/purescript-cretin/issues"
+  },
+  "homepage": "https://github.com/robertdp/purescript-cretin#readme"
+}
