@@ -34,14 +34,38 @@ instance decodeResponseVariant_ ::
 class DecodeResponseStatus status where
   decodeResponseStatus :: forall rep a. DecodeBody rep a => SProxy status -> Proxy rep -> Response -> F a
 
-instance decodeResponseOK :: DecodeResponseStatus "ok" where
+instance decodeResponseOk :: DecodeResponseStatus "ok" where
   decodeResponseStatus _ = decodeResponseWithStatus 200
 
-instance decodeResponseBadRequest :: DecodeResponseStatus "badRequest" where
+instance decodeResponseCreated :: DecodeResponseStatus "created" where
+  decodeResponseStatus _ = decodeResponseWithStatus 201
+
+instance decodeResponseNoContent :: DecodeResponseStatus "noContent" where
+  decodeResponseStatus _ = decodeResponseWithStatus 204
+
+instance decodeResponseNotModified :: DecodeResponseStatus "notModified" where
   decodeResponseStatus _ = decodeResponseWithStatus 304
+
+instance decodeResponseBadRequest :: DecodeResponseStatus "badRequest" where
+  decodeResponseStatus _ = decodeResponseWithStatus 400
+
+instance decodeResponseUnauthorized :: DecodeResponseStatus "unauthorized" where
+  decodeResponseStatus _ = decodeResponseWithStatus 401
+
+instance decodeResponseForbidden :: DecodeResponseStatus "forbidden" where
+  decodeResponseStatus _ = decodeResponseWithStatus 403
 
 instance decodeResponseNotFound :: DecodeResponseStatus "notFound" where
   decodeResponseStatus _ = decodeResponseWithStatus 404
+
+instance decodeResponseConflict :: DecodeResponseStatus "conflict" where
+  decodeResponseStatus _ = decodeResponseWithStatus 409
+
+instance decodeResponseInternalServerError :: DecodeResponseStatus "internalServerError" where
+  decodeResponseStatus _ = decodeResponseWithStatus 500
+
+instance decodeResponseMaintenanceInProgress :: DecodeResponseStatus "maintenanceInProgress" where
+  decodeResponseStatus _ = decodeResponseWithStatus 520
 
 decodeResponseWithStatus :: forall rep a. DecodeBody rep a => Int -> Proxy rep -> Response -> F a
 decodeResponseWithStatus status rep response
