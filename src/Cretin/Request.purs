@@ -1,12 +1,13 @@
 module Cretin.Request where
 
 import Prelude
-import Cretin.Params (class EncodeParams)
+
+import Cretin.Params (class WriteParams)
 import Cretin.Response (class DecodeResponse)
 import Cretin.Route (Route)
 import Data.Symbol (class IsSymbol)
 import Effect.Aff (Aff)
-import Milkis (Method, URL, Headers)
+import Milkis (Headers)
 import Simple.JSON (class WriteForeign, writeJSON)
 import Type.Equality (class TypeEquals)
 import Type.Proxy (Proxy)
@@ -22,7 +23,7 @@ instance requestableRoute ::
       { params :: params
       , response :: response'
       }
-  , EncodeParams params
+  , WriteParams params
   , DecodeResponse response' response
   ) =>
   Requestable (Route "GET" path spec) params body response where

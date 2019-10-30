@@ -3,56 +3,51 @@ module Cretin.Response where
 import Prelude
 import Control.Alt ((<|>))
 import Cretin.Types (Response)
-import Data.Identity (Identity(..))
 import Data.Symbol (class IsSymbol)
 import Data.Variant (SProxy(..), Variant, expand, inj)
-import Effect.Exception.Unsafe (unsafeThrow)
 import Foreign (F, ForeignError(..), fail)
 import Prim.Row (class Cons, class Union)
 import Prim.RowList (class RowToList, kind RowList, Cons, Nil)
-import Simple.JSON (class ReadForeign)
 import Type.Data.RowList (RLProxy(..))
-import Type.Equality (class TypeEquals)
 import Type.Proxy (Proxy(..))
 import Type.RowList (class ListToRow)
-import Unsafe.Coerce (unsafeCoerce)
 
 class DecodeBody rep a | rep -> a where
   decodeBody :: Proxy rep -> String -> F a
 
 class DecodeResponse rep response | rep -> response where
-  decodeResponse :: Proxy rep -> String -> F response
+  decodeResponse :: Proxy rep -> Response -> F response
 
 instance decodeResponseUnit :: DecodeResponse Unit Unit where
   decodeResponse _ _ = pure unit
 
 instance decodeResponseString :: DecodeResponse String String where
-  decodeResponse _ = pure
+  decodeResponse _ response = pure response.body
 
 instance decodeResponseVariant_ ::
   ( RowToList responses responseList
-  , DecodeRowList responseList resultList
   , ListToRow resultList result
+  , DecodeResponseVariant result responseList
   ) =>
   DecodeResponse { | responses } (Variant result) where
-  decodeResponse _ _ = unsafeCoerce unit
+  decodeResponse _ = decodeResponseVariant (RLProxy :: _ responseList)
 
-class DecodeResponseStatus status rep response | rep -> response where
-  decodeResponseStatus :: SProxy status -> Proxy rep -> Response -> F response
+class DecodeResponseStatus status where
+  decodeResponseStatus :: forall rep a. DecodeBody rep a => SProxy status -> Proxy rep -> Response -> F a
 
-instance decodeResponseOK ::
-  (DecodeBody rep response) =>
-  DecodeResponseStatus "ok" rep response where
-  decodeResponseStatus _ _ response
-    | response.status == 200 = decodeBody (Proxy :: _ rep) response.body
-    | otherwise = fail $ ForeignError $ "Failed to match status code " <> show response.status
+instance decodeResponseOK :: DecodeResponseStatus "ok" where
+  decodeResponseStatus _ = decodeResponseWithStatus 200
 
-instance decodeResponseBadRequest ::
-  (DecodeBody rep response) =>
-  DecodeResponseStatus "badRequest" rep response where
-  decodeResponseStatus _ _ response
-    | response.status == 304 = decodeBody (Proxy :: _ rep) response.body
-    | otherwise = fail $ ForeignError $ "Failed to match status code " <> show response.status
+instance decodeResponseBadRequest :: DecodeResponseStatus "badRequest" where
+  decodeResponseStatus _ = decodeResponseWithStatus 304
+
+instance decodeResponseNotFound :: DecodeResponseStatus "notFound" where
+  decodeResponseStatus _ = decodeResponseWithStatus 404
+
+decodeResponseWithStatus :: forall rep a. DecodeBody rep a => Int -> Proxy rep -> Response -> F a
+decodeResponseWithStatus status rep response
+  | response.status == status = decodeBody rep response.body
+  | otherwise = fail $ ForeignError $ "Failed to match status code " <> show response.status
 
 class DecodeRowList (rep :: RowList) (decoded :: RowList) | rep -> decoded
 
@@ -72,10 +67,11 @@ instance decodeResponseVariantNil :: DecodeResponseVariant () Nil where
 
 instance decodeResponseVariantCons ::
   ( IsSymbol status
-  , DecodeResponseStatus status rep decoded
+  , DecodeResponseStatus status
   , Cons status decoded variant' variant
   , DecodeResponseVariant variant' responseList
   , Union variant' a variant
+  , DecodeBody rep decoded
   ) =>
   DecodeResponseVariant variant (Cons status rep responseList) where
   decodeResponseVariant _ response =
