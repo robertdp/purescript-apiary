@@ -2,17 +2,18 @@ module Apiary.Response where
 
 import Prelude
 
-import Control.Alt ((<|>))
 import Apiary.Body (class DecodeBody, decodeBody)
 import Apiary.Types (Response)
+import Control.Alt ((<|>))
 import Data.Symbol (class IsSymbol)
 import Data.Variant (SProxy(..), Variant, expand, inj)
+import Effect.Exception.Unsafe (unsafeThrow)
 import Foreign (F, ForeignError(..), fail)
 import Prim.Row (class Cons, class Union)
 import Prim.RowList (class RowToList, kind RowList, Cons, Nil)
+import Prim.TypeError (class Fail, Beside, Text)
 import Type.Data.RowList (RLProxy(..))
 import Type.Proxy (Proxy(..))
-import Type.RowList (class ListToRow)
 
 class DecodeResponse rep response | rep -> response where
   decodeResponse :: Proxy rep -> Response -> F response
@@ -25,7 +26,6 @@ instance decodeResponseString :: DecodeResponse String String where
 
 instance decodeResponseVariant_ ::
   ( RowToList responses responseList
-  , ListToRow resultList result
   , DecodeResponseVariant result responseList
   ) =>
   DecodeResponse { | responses } (Variant result) where
@@ -36,36 +36,28 @@ class DecodeResponseStatus status where
 
 instance decodeResponseOk :: DecodeResponseStatus "ok" where
   decodeResponseStatus _ = decodeResponseWithStatus 200
-
-instance decodeResponseCreated :: DecodeResponseStatus "created" where
+else instance decodeResponseCreated :: DecodeResponseStatus "created" where
   decodeResponseStatus _ = decodeResponseWithStatus 201
-
-instance decodeResponseNoContent :: DecodeResponseStatus "noContent" where
+else instance decodeResponseNoContent :: DecodeResponseStatus "noContent" where
   decodeResponseStatus _ = decodeResponseWithStatus 204
-
-instance decodeResponseNotModified :: DecodeResponseStatus "notModified" where
+else instance decodeResponseNotModified :: DecodeResponseStatus "notModified" where
   decodeResponseStatus _ = decodeResponseWithStatus 304
-
-instance decodeResponseBadRequest :: DecodeResponseStatus "badRequest" where
+else instance decodeResponseBadRequest :: DecodeResponseStatus "badRequest" where
   decodeResponseStatus _ = decodeResponseWithStatus 400
-
-instance decodeResponseUnauthorized :: DecodeResponseStatus "unauthorized" where
+else instance decodeResponseUnauthorized :: DecodeResponseStatus "unauthorized" where
   decodeResponseStatus _ = decodeResponseWithStatus 401
-
-instance decodeResponseForbidden :: DecodeResponseStatus "forbidden" where
+else instance decodeResponseForbidden :: DecodeResponseStatus "forbidden" where
   decodeResponseStatus _ = decodeResponseWithStatus 403
-
-instance decodeResponseNotFound :: DecodeResponseStatus "notFound" where
+else instance decodeResponseNotFound :: DecodeResponseStatus "notFound" where
   decodeResponseStatus _ = decodeResponseWithStatus 404
-
-instance decodeResponseConflict :: DecodeResponseStatus "conflict" where
+else instance decodeResponseConflict :: DecodeResponseStatus "conflict" where
   decodeResponseStatus _ = decodeResponseWithStatus 409
-
-instance decodeResponseInternalServerError :: DecodeResponseStatus "internalServerError" where
+else instance decodeResponseInternalServerError :: DecodeResponseStatus "internalServerError" where
   decodeResponseStatus _ = decodeResponseWithStatus 500
-
-instance decodeResponseMaintenanceInProgress :: DecodeResponseStatus "maintenanceInProgress" where
+else instance decodeResponseMaintenanceInProgress :: DecodeResponseStatus "maintenanceInProgress" where
   decodeResponseStatus _ = decodeResponseWithStatus 520
+else instance decodeResponseFailure :: (Fail (Beside (Text "Unknown response status: ") (Text unknown))) => DecodeResponseStatus unknown where
+  decodeResponseStatus _ _ _ = unsafeThrow "this is impossible"
 
 decodeResponseWithStatus :: forall rep a. DecodeBody rep a => Int -> Proxy rep -> Response -> F a
 decodeResponseWithStatus status rep response
@@ -96,3 +88,6 @@ instance decodeResponseVariantCons ::
     decodeStatus = decodeResponseStatus status (Proxy :: _ rep) response
 
     decodeRest = decodeResponseVariant (RLProxy :: _ responseList) response
+
+
+test = decodeResponse (Proxy :: _ { thisIsNotAStatus :: String })
