@@ -1,7 +1,6 @@
 module Apiary.Response where
 
 import Prelude
-
 import Apiary.Body (class DecodeBody, decodeBody)
 import Apiary.Types (Response)
 import Control.Alt ((<|>))
@@ -56,7 +55,13 @@ else instance decodeResponseInternalServerError :: DecodeResponseStatus "interna
   decodeResponseStatus _ = decodeResponseWithStatus 500
 else instance decodeResponseMaintenanceInProgress :: DecodeResponseStatus "maintenanceInProgress" where
   decodeResponseStatus _ = decodeResponseWithStatus 520
-else instance decodeResponseFailure :: (Fail (Beside (Text "Unknown response status: ") (Text unknown))) => DecodeResponseStatus unknown where
+else instance decodeResponseFailure ::
+  ( Fail
+        ( Beside (Text "Unknown response status: ")
+            (Text unknown)
+        )
+    ) =>
+  DecodeResponseStatus unknown where
   decodeResponseStatus _ _ _ = unsafeThrow "this is impossible"
 
 decodeResponseWithStatus :: forall rep a. DecodeBody rep a => Int -> Proxy rep -> Response -> F a
@@ -88,6 +93,3 @@ instance decodeResponseVariantCons ::
     decodeStatus = decodeResponseStatus status (Proxy :: _ rep) response
 
     decodeRest = decodeResponseVariant (RLProxy :: _ responseList) response
-
-
-test = decodeResponse (Proxy :: _ { thisIsNotAStatus :: String })
