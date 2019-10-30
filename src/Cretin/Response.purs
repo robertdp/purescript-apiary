@@ -1,7 +1,9 @@
 module Cretin.Response where
 
 import Prelude
+
 import Control.Alt ((<|>))
+import Cretin.Body (class DecodeBody, decodeBody)
 import Cretin.Types (Response)
 import Data.Symbol (class IsSymbol)
 import Data.Variant (SProxy(..), Variant, expand, inj)
@@ -11,9 +13,6 @@ import Prim.RowList (class RowToList, kind RowList, Cons, Nil)
 import Type.Data.RowList (RLProxy(..))
 import Type.Proxy (Proxy(..))
 import Type.RowList (class ListToRow)
-
-class DecodeBody rep a | rep -> a where
-  decodeBody :: Proxy rep -> String -> F a
 
 class DecodeResponse rep response | rep -> response where
   decodeResponse :: Proxy rep -> Response -> F response
