@@ -48,16 +48,6 @@ decodeResponseWithStatus status rep response
   | response.status == status = decodeBody rep response.body
   | otherwise = fail $ ForeignError $ "Failed to match status code " <> show response.status
 
-class DecodeRowList (rep :: RowList) (decoded :: RowList) | rep -> decoded
-
-instance decodeRowListNil :: DecodeRowList Nil Nil
-
-instance decodeRowListCons ::
-  ( DecodeBody rep decoded
-  , DecodeRowList repTail decodedTail
-  ) =>
-  DecodeRowList (Cons name rep repTail) (Cons name decoded decodedTail)
-
 class DecodeResponseVariant (response :: #Type) (responseList :: RowList) | responseList -> response where
   decodeResponseVariant :: RLProxy responseList -> Response -> F (Variant response)
 
