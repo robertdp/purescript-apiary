@@ -1,10 +1,10 @@
-module Cretin.Request where
+module Apiary.Request where
 
 import Prelude
 
-import Cretin.Params (class WriteParams)
-import Cretin.Response (class DecodeResponse)
-import Cretin.Route (Route)
+import Apiary.Params (class WriteParams)
+import Apiary.Response (class DecodeResponse)
+import Apiary.Route (Route)
 import Data.Symbol (class IsSymbol)
 import Effect.Aff (Aff)
 import Milkis (Headers)

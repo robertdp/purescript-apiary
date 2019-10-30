@@ -1,4 +1,4 @@
-module Cretin.Params where
+module Apiary.Params where
 
 import Prelude
 import Data.String (Pattern(..), Replacement(..))

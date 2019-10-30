@@ -1,10 +1,10 @@
-module Cretin.Response where
+module Apiary.Response where
 
 import Prelude
 
 import Control.Alt ((<|>))
-import Cretin.Body (class DecodeBody, decodeBody)
-import Cretin.Types (Response)
+import Apiary.Body (class DecodeBody, decodeBody)
+import Apiary.Types (Response)
 import Data.Symbol (class IsSymbol)
 import Data.Variant (SProxy(..), Variant, expand, inj)
 import Foreign (F, ForeignError(..), fail)

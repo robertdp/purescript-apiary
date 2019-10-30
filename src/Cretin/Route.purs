@@ -1,4 +1,4 @@
-module Cretin.Route where
+module Apiary.Route where
 
 data Route (method :: Symbol) (path :: Symbol) spec
   = Route

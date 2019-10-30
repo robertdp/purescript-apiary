@@ -1,5 +1,5 @@
 {
-  "name": "purescript-cretin",
+  "name": "purescript-apiary",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -18,12 +18,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/robertdp/purescript-cretin.git"
+    "url": "git+https://github.com/robertdp/purescript-apiary.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/robertdp/purescript-cretin/issues"
+    "url": "https://github.com/robertdp/purescript-apiary/issues"
   },
-  "homepage": "https://github.com/robertdp/purescript-cretin#readme"
+  "homepage": "https://github.com/robertdp/purescript-apiary#readme"
 }

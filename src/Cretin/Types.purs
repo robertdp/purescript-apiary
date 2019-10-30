@@ -1,4 +1,4 @@
-module Cretin.Types where
+module Apiary.Types where
 
 import Prelude
 

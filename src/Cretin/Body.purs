@@ -1,4 +1,4 @@
-module Cretin.Body where
+module Apiary.Body where
 
 import Foreign (F)
 import Type.Proxy (Proxy)
