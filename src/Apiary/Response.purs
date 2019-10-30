@@ -56,12 +56,12 @@ else instance decodeResponseInternalServerError :: DecodeResponseStatus "interna
 else instance decodeResponseMaintenanceInProgress :: DecodeResponseStatus "maintenanceInProgress" where
   decodeResponseStatus _ = decodeResponseWithStatus 520
 else instance decodeResponseFailure ::
-  ( Fail
-        ( Beside (Text "Unknown response status: ")
-            (Text unknown)
-        )
-    ) =>
-  DecodeResponseStatus unknown where
+  Fail
+      ( Beside
+          (Text "Unknown response status: ")
+          (Text status)
+      ) =>
+  DecodeResponseStatus status where
   decodeResponseStatus _ _ _ = unsafeThrow "this is impossible"
 
 decodeResponseWithStatus :: forall rep a. DecodeBody rep a => Int -> Proxy rep -> Response -> F a
