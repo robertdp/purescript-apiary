@@ -4,7 +4,8 @@ import Data.Symbol (SProxy)
 import Partial.Unsafe (unsafeCrashWith)
 import Prim.TypeError (class Fail, Beside, Text)
 
-newtype Status = Status { code :: Int, reason :: String }
+newtype Status
+  = Status { code :: Int, reason :: String }
 
 statusCode :: Status -> Int
 statusCode (Status { code }) = code
@@ -42,9 +43,6 @@ notFound = status 404 "Not Found"
 conflict :: Status
 conflict = status 409 "Conflict"
 
-internalServerError :: Status
-internalServerError = status 500 "Internal Server Error"
-
 maintenanceInProgress :: Status
 maintenanceInProgress = status 520 "Maintenance In Progress"
 
@@ -69,10 +67,6 @@ else instance responseStatusNotFound :: ResponseStatus "notFound" where
   toStatus _ = notFound
 else instance responseStatusConflict :: ResponseStatus "conflict" where
   toStatus _ = conflict
-else instance responseStatusInternalServerError :: ResponseStatus "internalServerError" where
-  toStatus _ = internalServerError
-else instance responseStatusMaintenanceInProgress :: ResponseStatus "maintenanceInProgress" where
-  toStatus _ = maintenanceInProgress
 else instance responseStatusFail ::
   Fail (Beside (Text "Unknown response status: ") (Text reason)) =>
   ResponseStatus reason where
