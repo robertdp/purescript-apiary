@@ -3,7 +3,7 @@ module Apiary.Body where
 import Prelude
 
 import Foreign (F)
-import Simple.JSON (class ReadForeign, readJSON')
+import Simple.JSON (class ReadForeign, class WriteForeign, readJSON', writeJSON)
 import Type.Proxy (Proxy)
 
 class DecodeBody rep a | rep -> a where
@@ -23,3 +23,8 @@ instance decodeBodyJSON :: (ReadForeign a) => DecodeBody (JSON a) a where
 class EncodeBody rep a | rep -> a where
   encodeBody :: Proxy rep -> a -> String
 
+instance encodeBodyString :: EncodeBody String String where
+  encodeBody _ = identity
+
+instance encodeBodyJSON :: (WriteForeign a) => EncodeBody (JSON a) a where
+  encodeBody _ = writeJSON

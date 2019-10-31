@@ -23,9 +23,6 @@ instance encodeParamString :: EncodeParam String where
 class WriteParams params where
   writeParams :: params -> String -> String
 
-class WriteParamRecord params paramList | paramList -> params where
-  writeParamRecord :: RLProxy paramList -> Record params -> String -> String
-
 instance writeParamsUnit :: WriteParams Unit where
   writeParams _ = identity
 
@@ -35,6 +32,9 @@ instance writeParamsRecord ::
   ) =>
   WriteParams { | params } where
   writeParams = writeParamRecord (RLProxy :: _ paramList)
+
+class WriteParamRecord params paramList | paramList -> params where
+  writeParamRecord :: RLProxy paramList -> Record params -> String -> String
 
 instance writeParamRecordNil :: WriteParamRecord () Nil where
   writeParamRecord _ _ = identity

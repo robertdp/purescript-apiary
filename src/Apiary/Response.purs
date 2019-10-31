@@ -1,7 +1,6 @@
 module Apiary.Response where
 
 import Prelude
-
 import Apiary.Body (class DecodeBody, decodeBody)
 import Apiary.Status (class ResponseStatus)
 import Apiary.Status as Status
@@ -24,7 +23,7 @@ instance decodeResponseUnit :: DecodeResponse Unit Unit where
 instance decodeResponseString :: DecodeResponse String String where
   decodeResponse _ response = pure response.body
 
-instance decodeResponseVariant_ ::
+instance decodeResponseRecord ::
   ( RowToList responses responseList
   , DecodeResponseVariant result responseList
   ) =>
@@ -35,7 +34,8 @@ class DecodeResponseVariant (response :: #Type) (responseList :: RowList) | resp
   decodeResponseVariant :: RLProxy responseList -> Response -> F (Variant response)
 
 instance decodeResponseVariantNil :: DecodeResponseVariant () Nil where
-  decodeResponseVariant _ response = fail $ ForeignError $ "Failed to match response with status code " <> show response.status
+  -- | This will never be reached if the data originates from PureScript.
+  decodeResponseVariant _ response = fail $ ForeignError $ "Failed to match any variant with status code " <> show response.status
 
 instance decodeResponseVariantCons ::
   ( IsSymbol status
@@ -59,4 +59,3 @@ instance decodeResponseVariantCons ::
       | otherwise = fail $ ForeignError $ "Failed to match status code " <> show response.status
 
     decodeRest = decodeResponseVariant (RLProxy :: _ responseList) response
-
