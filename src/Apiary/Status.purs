@@ -46,8 +46,8 @@ conflict = status 409 "Conflict"
 maintenanceInProgress :: Status
 maintenanceInProgress = status 520 "Maintenance In Progress"
 
-class ResponseStatus (reason :: Symbol) where
-  toStatus :: SProxy reason -> Status
+class ResponseStatus (status :: Symbol) where
+  toStatus :: SProxy status -> Status
 
 instance responseStatusOK :: ResponseStatus "ok" where
   toStatus _ = ok
@@ -68,6 +68,6 @@ else instance responseStatusNotFound :: ResponseStatus "notFound" where
 else instance responseStatusConflict :: ResponseStatus "conflict" where
   toStatus _ = conflict
 else instance responseStatusFail ::
-  Fail (Beside (Text "Unknown response status: ") (Text reason)) =>
-  ResponseStatus reason where
+  Fail (Beside (Text "Invalid response status: ") (Text status)) =>
+  ResponseStatus status where
   toStatus _ = unsafeCrashWith "impossible"
