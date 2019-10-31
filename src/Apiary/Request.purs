@@ -39,10 +39,10 @@ instance requestable ::
         , body: text
         }
 
-    decode =
-      decodeResponse (Proxy :: _ rep)
-        >>> runExcept
-        >>> case _ of
+    decode text =
+      decodeResponse (Proxy :: _ rep) text
+        # runExcept
+        # case _ of
             Left errors -> do
               Console.logShow $ renderForeignError <$> errors
               throwError $ error $ renderForeignError $ extract errors

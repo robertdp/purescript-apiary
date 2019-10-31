@@ -52,7 +52,7 @@ instance decodeResponseVariantCons ::
     where
     status = SProxy :: _ status
 
-    statusCode = Status.statusCode (Status.toStatus status)
+    statusCode = Status.statusCode $ Status.toStatus status
 
     decodeStatus
       | response.status == statusCode = decodeBody (Proxy :: _ rep) response.body
