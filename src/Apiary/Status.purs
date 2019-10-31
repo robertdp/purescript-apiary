@@ -1,6 +1,8 @@
 module Apiary.Status where
 
 import Data.Symbol (SProxy)
+import Partial.Unsafe (unsafeCrashWith)
+import Prim.TypeError (class Fail, Beside, Text)
 
 newtype Status = Status { code :: Int, reason :: String }
 
@@ -51,33 +53,27 @@ class ResponseStatus (reason :: Symbol) where
 
 instance responseStatusOK :: ResponseStatus "ok" where
   toStatus _ = ok
-
-instance responseStatusCreated :: ResponseStatus "created" where
+else instance responseStatusCreated :: ResponseStatus "created" where
   toStatus _ = created
-
-instance responseStatusNoContent :: ResponseStatus "noContent" where
+else instance responseStatusNoContent :: ResponseStatus "noContent" where
   toStatus _ = noContent
-
-instance responseStatusNotModified :: ResponseStatus "notModified" where
+else instance responseStatusNotModified :: ResponseStatus "notModified" where
   toStatus _ = notModified
-
-instance responseStatusBadRequest :: ResponseStatus "badRequest" where
+else instance responseStatusBadRequest :: ResponseStatus "badRequest" where
   toStatus _ = badRequest
-
-instance responseStatusUnauthorized :: ResponseStatus "unauthorized" where
+else instance responseStatusUnauthorized :: ResponseStatus "unauthorized" where
   toStatus _ = unauthorized
-
-instance responseStatusForbidden :: ResponseStatus "forbidden" where
+else instance responseStatusForbidden :: ResponseStatus "forbidden" where
   toStatus _ = forbidden
-
-instance responseStatusNotFound :: ResponseStatus "notFound" where
+else instance responseStatusNotFound :: ResponseStatus "notFound" where
   toStatus _ = notFound
-
-instance responseStatusConflict :: ResponseStatus "conflict" where
+else instance responseStatusConflict :: ResponseStatus "conflict" where
   toStatus _ = conflict
-
-instance responseStatusInternalServerError :: ResponseStatus "internalServerError" where
+else instance responseStatusInternalServerError :: ResponseStatus "internalServerError" where
   toStatus _ = internalServerError
-
-instance responseStatusMaintenanceInProgress :: ResponseStatus "maintenanceInProgress" where
+else instance responseStatusMaintenanceInProgress :: ResponseStatus "maintenanceInProgress" where
   toStatus _ = maintenanceInProgress
+else instance responseStatusFail ::
+  Fail (Beside (Text "Unknown response status: ") (Text reason)) =>
+  ResponseStatus reason where
+  toStatus _ = unsafeCrashWith "impossible"
