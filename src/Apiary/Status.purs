@@ -7,6 +7,9 @@ newtype Status = Status { code :: Int, reason :: String }
 statusCode :: Status -> Int
 statusCode (Status { code }) = code
 
+statusReason :: Status -> String
+statusReason (Status { reason }) = reason
+
 status :: Int -> String -> Status
 status code reason = Status { code, reason }
 
