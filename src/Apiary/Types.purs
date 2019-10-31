@@ -1,15 +1,13 @@
 module Apiary.Types where
 
 import Prelude
-
-import Data.Maybe (Maybe)
 import Milkis (Headers, Method, URL(..), getMethod)
 
 type Request
   = { method :: Method
     , url :: URL
     , headers :: Headers
-    , body :: Maybe String
+    , body :: String
     }
 
 emptyRequest :: Request
