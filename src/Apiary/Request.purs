@@ -10,8 +10,7 @@ import Data.Symbol (SProxy(..))
 import Effect.Aff (Aff, error)
 import Effect.Class.Console as Console
 import Foreign (renderForeignError)
-import Milkis (fetch, headers, statusCode) as Milkis
-import Milkis as Milkil
+import Milkis (fetch, headers, statusCode, text) as Milkis
 import Milkis.Impl.Window (windowFetch) as Milkis
 import Record as Record
 import Type.Proxy (Proxy(..))
@@ -33,7 +32,7 @@ instance requestable ::
 
     fetch req = do
       response <- Milkis.fetch Milkis.windowFetch req.url $ Record.delete (SProxy :: _ "url") req
-      text <- Milkil.text response
+      text <- Milkis.text response
       pure
         { status: Milkis.statusCode response
         , headers: Milkis.headers response
