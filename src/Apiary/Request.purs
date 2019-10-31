@@ -32,7 +32,7 @@ instance requestable ::
     request = transform $ buildRequest route params body
 
     fetch req = do
-      response <- Milkis.fetch Milkis.windowFetch request.url $ Record.delete (SProxy :: _ "url") req
+      response <- Milkis.fetch Milkis.windowFetch req.url $ Record.delete (SProxy :: _ "url") req
       text <- Milkil.text response
       pure
         { status: Milkis.statusCode response
