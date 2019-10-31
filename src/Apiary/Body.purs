@@ -23,6 +23,9 @@ instance decodeBodyJSON :: (ReadForeign a) => DecodeBody (JSON a) a where
 class EncodeBody rep a | rep -> a where
   encodeBody :: Proxy rep -> a -> String
 
+instance encodeBodyUnit :: EncodeBody Unit Unit where
+  encodeBody _ _ = ""
+
 instance encodeBodyString :: EncodeBody String String where
   encodeBody _ = identity
 
