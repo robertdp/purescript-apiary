@@ -1,7 +1,6 @@
 module Apiary.Request where
 
 import Prelude
-
 import Apiary.Response (class DecodeResponse, decodeResponse)
 import Apiary.Types (Request)
 import Control.Comonad (extract)
@@ -35,11 +34,11 @@ instance requestable ::
     fetch req = do
       response <- Milkis.fetch Milkis.windowFetch request.url $ Record.delete (SProxy :: _ "url") req
       text <- Milkil.text response
-      let
-        status = Milkis.statusCode response
-
-        headers = Milkis.headers response
-      pure { status, headers, body: text }
+      pure
+        { status: Milkis.statusCode response
+        , headers: Milkis.headers response
+        , body: text
+        }
 
     decode =
       decodeResponse (Proxy :: _ rep)
