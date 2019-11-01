@@ -15,35 +15,35 @@ import Milkis.Impl.Window (windowFetch) as Milkis
 import Record as Record
 import Type.Proxy (Proxy(..))
 
-class Requestable route params body response | route -> params body response where
-  makeRequest :: route -> (Request -> Request) -> params -> body -> Aff response
-
 class BuildRequest route params body rep | route -> params body rep where
   buildRequest :: route -> params -> body -> Request
 
-instance requestable ::
-  ( BuildRequest route params body rep
-  , DecodeResponse rep response
-  ) =>
-  Requestable route params body response where
-  makeRequest route transform params body = decode =<< fetch request
-    where
-    request = transform $ buildRequest route params body
+makeRequest :: forall route params body rep response.
+  BuildRequest route params body rep =>
+  DecodeResponse rep response =>
+  route ->
+  (Request -> Request) ->
+  params ->
+  body ->
+  Aff response
+makeRequest route transform params body = decode =<< fetch request
+  where
+  request = transform $ buildRequest route params body
 
-    fetch req = do
-      response <- Milkis.fetch Milkis.windowFetch req.url $ Record.delete (SProxy :: _ "url") req
-      text <- Milkis.text response
-      pure
-        { status: Milkis.statusCode response
-        , headers: Milkis.headers response
-        , body: text
-        }
+  fetch req = do
+    response <- Milkis.fetch Milkis.windowFetch req.url $ Record.delete (SProxy :: _ "url") req
+    text <- Milkis.text response
+    pure
+      { status: Milkis.statusCode response
+      , headers: Milkis.headers response
+      , body: text
+      }
 
-    decode text =
-      decodeResponse (Proxy :: _ rep) text
-        # runExcept
-        # case _ of
-            Left errors -> do
-              Console.logShow $ renderForeignError <$> errors
-              throwError $ error $ renderForeignError $ extract errors
-            Right response -> pure response
+  decode text =
+    decodeResponse (Proxy :: _ rep) text
+      # runExcept
+      # case _ of
+          Left errors -> do
+            Console.logShow $ renderForeignError <$> errors
+            throwError $ error $ renderForeignError $ extract errors
+          Right response -> pure response
