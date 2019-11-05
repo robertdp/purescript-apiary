@@ -5,6 +5,12 @@ It's hard to be a busy little bee when working with unspec'ed APIs. This library
 ### Example
 
 ```purescript
+type User
+  = { id :: Int
+    , name :: String
+    , email :: String
+    }
+
 type ListUsers
   = GET "/users"
     { query ::
@@ -12,20 +18,20 @@ type ListUsers
       , sortDir :: SortDir
       }
     , response ::
-      { ok :: JSON (Array { id :: Int, name :: String, email :: String })
+      { ok :: JSON (Array User)
       }
     }
 
 listUsers ::
   { sortBy :: Maybe UserSort, sortDir :: Maybe SortDir } ->
-  Aff (Variant ( ok :: Array { id :: Int, name :: String, email :: String } ))
+  Aff (Variant ( ok :: Array User ))
 listUsers params = Apiary.makeRequest (Route :: ListUsers) identity params unit
 
 type CreateNewUser
   = POST "/users"
     { body :: JSON { name :: String, email :: String }
     , response ::
-      { ok :: JSON { id :: Int, name :: String, email :: String }
+      { ok :: JSON User
       , badRequest :: JSON { errors :: Array { field :: String, message :: String } }
       }
     }
@@ -34,7 +40,7 @@ createNewUser ::
   { name :: String, email :: String } ->
   Aff
     (Variant
-      ( ok :: { id :: Int, name :: String, email :: String }
+      ( ok :: User
       , badRequest :: { errors :: Array { field :: String, message :: String } }
       )
     )
