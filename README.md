@@ -23,8 +23,7 @@ listUsers params = Apiary.makeRequest (Route :: ListUsers) identity params unit
 
 type CreateNewUser
   = POST "/users"
-    { body ::
-      JSON { name :: String, email :: String }
+    { body :: JSON { name :: String, email :: String }
     , response ::
       { ok :: JSON (Array { id :: Int, name :: String, email :: String })
       , badRequest :: JSON { errors :: Array { field :: String, message :: String } }
