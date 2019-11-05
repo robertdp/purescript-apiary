@@ -33,7 +33,7 @@ type CreateNewUser
 
 listUsers params = Apiary.makeRequest (Route :: ListUsers) identity params unit
 
-createNewUser = Apiary.makeRequest (Route :: CreateNewUser) identity {}
+createNewUser body = Apiary.makeRequest (Route :: CreateNewUser) identity {} body
 ```
 
 This will give us inferred types equivalent to
