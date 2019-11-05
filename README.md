@@ -28,6 +28,7 @@ type CreateNewUser
       { ok :: JSON (Array { id :: Int, name :: String, email :: String })
       , badRequest :: JSON { errors :: Array { field :: String, message :: String } }
       }
+    }
 
 createNewUser ::
   { name :: String, email :: String } ->
