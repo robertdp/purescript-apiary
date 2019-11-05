@@ -16,6 +16,11 @@ type ListUsers
       }
     }
 
+listUsers ::
+  { sortBy :: Maybe UserSort, sortDir :: Maybe SortDir } ->
+  Aff (Variant ( ok :: Array { id :: Int, name :: String, email :: String } ))
+listUsers params = Apiary.makeRequest (Route :: ListUsers) identity params unit
+
 type CreateNewUser
   = POST "/users"
     { body ::
@@ -24,12 +29,6 @@ type CreateNewUser
       { ok :: JSON (Array { id :: Int, name :: String, email :: String })
       , badRequest :: JSON { errors :: Array { field :: String, message :: String } }
       }
-
-listUsers ::
-  { sortBy :: Maybe UserSort, sortDir :: Maybe SortDir } ->
-  Unit ->
-  Aff (Variant ( ok :: Array { id :: Int, name :: String, email :: String } ))
-listUsers = Apiary.makeRequest (Route :: ListUsers) identity
 
 createNewUser ::
   { name :: String, email :: String } ->
