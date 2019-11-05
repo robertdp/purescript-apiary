@@ -79,7 +79,7 @@ instance buildQueryParamsNil :: BuildQueryParams () Nil where
 instance buildQueryParamsConsArray ::
   ( IsSymbol name
   , EncodeParam value
-  , Cons name (Maybe (Array value)) params' params
+  , Cons name (Array value) params' params
   , BuildQueryParams params' paramTail
   ) =>
   BuildQueryParams params (Cons name (Array value) paramTail) where
@@ -91,10 +91,7 @@ instance buildQueryParamsConsArray ::
 
     name = reflectSymbol name'
 
-    query =
-      case Record.get name' params of
-        Nothing -> []
-        Just values -> values <#> encodeQueryParam name
+    query = Record.get name' params <#> encodeQueryParam name
 else instance buildQueryParamsCons ::
   ( IsSymbol name
   , EncodeParam value
