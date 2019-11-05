@@ -31,10 +31,17 @@ type CreateNewUser
       }
     }
 
+listUsers params = Apiary.makeRequest (Route :: ListUsers) identity params unit
+
+createNewUser = Apiary.makeRequest (Route :: CreateNewUser) identity {}
+```
+
+This will give us inferred types equivalent to
+
+```purescript
 listUsers ::
   { sortBy :: Maybe UserSort, sortDir :: Maybe SortDir } ->
   Aff (Variant ( ok :: Array User ))
-listUsers params = Apiary.makeRequest (Route :: ListUsers) identity params unit
 
 createNewUser ::
   { name :: String, email :: String } ->
@@ -44,5 +51,4 @@ createNewUser ::
       , badRequest :: { errors :: Array { field :: String, message :: String } }
       )
     )
-createNewUser = Apiary.makeRequest (Route :: CreateNewUser) identity {}
 ```
