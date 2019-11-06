@@ -67,13 +67,7 @@ instance buildRequestRouteGET ::
   , IsSymbol path
   ) =>
   BuildRequest (Route "GET" path spec) fullParams Unit response where
-  buildRequest _ =
-    buildRequest_
-      "GET"
-      (SProxy :: _ path)
-      (Proxy :: _ params)
-      (Proxy :: _ query)
-      (Proxy :: _ Unit)
+  buildRequest _ = buildRequest_ "GET" (SProxy :: _ path) (Proxy :: _ params) (Proxy :: _ query) (Proxy :: _ Unit)
 else instance buildRequestRoutePATCH ::
   ( PrepareSpec
       spec
@@ -88,13 +82,7 @@ else instance buildRequestRoutePATCH ::
   , IsSymbol path
   ) =>
   BuildRequest (Route "PATCH" path spec) fullParams body' response where
-  buildRequest _ =
-    buildRequest_
-      "PATCH"
-      (SProxy :: _ path)
-      (Proxy :: _ params)
-      (Proxy :: _ query)
-      (Proxy :: _ body)
+  buildRequest _ = buildRequest_ "PATCH" (SProxy :: _ path) (Proxy :: _ params) (Proxy :: _ query) (Proxy :: _ body)
 else instance buildRequestRoutePOST ::
   ( PrepareSpec
       spec
@@ -109,13 +97,7 @@ else instance buildRequestRoutePOST ::
   , IsSymbol path
   ) =>
   BuildRequest (Route "POST" path spec) fullParams body' response where
-  buildRequest _ =
-    buildRequest_
-      "POST"
-      (SProxy :: _ path)
-      (Proxy :: _ params)
-      (Proxy :: _ query)
-      (Proxy :: _ body)
+  buildRequest _ = buildRequest_ "POST" (SProxy :: _ path) (Proxy :: _ params) (Proxy :: _ query) (Proxy :: _ body)
 else instance buildRequestRoutePUT ::
   ( PrepareSpec
       spec
@@ -130,13 +112,7 @@ else instance buildRequestRoutePUT ::
   , IsSymbol path
   ) =>
   BuildRequest (Route "PUT" path spec) fullParams body' response where
-  buildRequest _ =
-    buildRequest_
-      "PUT"
-      (SProxy :: _ path)
-      (Proxy :: _ params)
-      (Proxy :: _ query)
-      (Proxy :: _ body)
+  buildRequest _ = buildRequest_ "PUT" (SProxy :: _ path) (Proxy :: _ params) (Proxy :: _ query) (Proxy :: _ body)
 else instance buildRequestRouteDELETE ::
   ( PrepareSpec
       spec
@@ -151,13 +127,7 @@ else instance buildRequestRouteDELETE ::
   , IsSymbol path
   ) =>
   BuildRequest (Route "DELETE" path spec) fullParams body' response where
-  buildRequest _ =
-    buildRequest_
-      "DELETE"
-      (SProxy :: _ path)
-      (Proxy :: _ params)
-      (Proxy :: _ query)
-      (Proxy :: _ body)
+  buildRequest _ = buildRequest_ "DELETE" (SProxy :: _ path) (Proxy :: _ params) (Proxy :: _ query) (Proxy :: _ body)
 
 buildRequest_ ::
   forall path pathParams queryParams params bodyRep body.
