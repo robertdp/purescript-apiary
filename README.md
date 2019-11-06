@@ -1,4 +1,11 @@
-# Apiary
+<pre>
+     _          _
+    / \   _ __ (_) __ _ _ __ _   _                .' '.            __
+   / _ \ | '_ \| |/ _` | '__| | | |      .        .   .           (__\_
+  / ___ \| |_) | | (_| | |  | |_| |       .         .         . -{{_(|8)
+ /_/   \_\ .__/|_|\__,_|_|   \__, |         ' .  . ' ' .  . '     (__/
+         |_|                 |___/
+</pre>
 
 It's hard to be a busy little bee when working with unspec'ed APIs. This library is designed for the creation of type-level specs that can be queried against automatically!
 
