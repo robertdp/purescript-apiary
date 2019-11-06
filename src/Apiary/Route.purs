@@ -1,13 +1,12 @@
 module Apiary.Route where
 
-import Prelude
-
 import Apiary.Body (class EncodeBody, encodeBody)
 import Apiary.Params (class WriteParams, writeParams)
 import Apiary.Request (class BuildRequest)
 import Apiary.Response (class DecodeResponse)
 import Apiary.Types (Request)
 import Data.Symbol (class IsSymbol, reflectSymbol)
+import Data.Unit (Unit)
 import Data.Variant (SProxy(..))
 import Foreign.Object as Object
 import Prim.Row (class Nub, class Union)
@@ -89,13 +88,13 @@ else instance buildRequestRoutePATCH ::
   , IsSymbol path
   ) =>
   BuildRequest (Route "PATCH" path spec) fullParams body' response where
-    buildRequest _ =
-      buildRequest_
-        "PATCH"
-        (SProxy :: _ path)
-        (Proxy :: _ params)
-        (Proxy :: _ query)
-        (Proxy :: _ body)
+  buildRequest _ =
+    buildRequest_
+      "PATCH"
+      (SProxy :: _ path)
+      (Proxy :: _ params)
+      (Proxy :: _ query)
+      (Proxy :: _ body)
 else instance buildRequestRoutePOST ::
   ( PrepareSpec
       spec
@@ -110,13 +109,13 @@ else instance buildRequestRoutePOST ::
   , IsSymbol path
   ) =>
   BuildRequest (Route "POST" path spec) fullParams body' response where
-    buildRequest _ =
-      buildRequest_
-        "POST"
-        (SProxy :: _ path)
-        (Proxy :: _ params)
-        (Proxy :: _ query)
-        (Proxy :: _ body)
+  buildRequest _ =
+    buildRequest_
+      "POST"
+      (SProxy :: _ path)
+      (Proxy :: _ params)
+      (Proxy :: _ query)
+      (Proxy :: _ body)
 else instance buildRequestRoutePUT ::
   ( PrepareSpec
       spec
@@ -131,13 +130,13 @@ else instance buildRequestRoutePUT ::
   , IsSymbol path
   ) =>
   BuildRequest (Route "PUT" path spec) fullParams body' response where
-    buildRequest _ =
-      buildRequest_
-        "PUT"
-        (SProxy :: _ path)
-        (Proxy :: _ params)
-        (Proxy :: _ query)
-        (Proxy :: _ body)
+  buildRequest _ =
+    buildRequest_
+      "PUT"
+      (SProxy :: _ path)
+      (Proxy :: _ params)
+      (Proxy :: _ query)
+      (Proxy :: _ body)
 else instance buildRequestRouteDELETE ::
   ( PrepareSpec
       spec
@@ -152,13 +151,13 @@ else instance buildRequestRouteDELETE ::
   , IsSymbol path
   ) =>
   BuildRequest (Route "DELETE" path spec) fullParams body' response where
-    buildRequest _ =
-      buildRequest_
-        "DELETE"
-        (SProxy :: _ path)
-        (Proxy :: _ params)
-        (Proxy :: _ query)
-        (Proxy :: _ body)
+  buildRequest _ =
+    buildRequest_
+      "DELETE"
+      (SProxy :: _ path)
+      (Proxy :: _ params)
+      (Proxy :: _ query)
+      (Proxy :: _ body)
 
 buildRequest_ ::
   forall path pathParams queryParams params bodyRep body.

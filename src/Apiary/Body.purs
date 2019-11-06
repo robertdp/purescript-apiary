@@ -1,7 +1,8 @@
 module Apiary.Body where
 
-import Prelude
-
+import Control.Applicative (pure)
+import Control.Category (identity)
+import Data.Unit (Unit, unit)
 import Foreign (F)
 import Simple.JSON (class ReadForeign, class WriteForeign, readJSON', writeJSON)
 import Type.Proxy (Proxy)
@@ -15,7 +16,8 @@ instance decodeBodyUnit :: DecodeBody Unit Unit where
 instance decodeBodyString :: DecodeBody String String where
   decodeBody _ = pure
 
-newtype JSON a = JSON a
+newtype JSON a
+  = JSON a
 
 instance decodeBodyJSON :: (ReadForeign a) => DecodeBody (JSON a) a where
   decodeBody _ = readJSON'

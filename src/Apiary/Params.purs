@@ -1,8 +1,12 @@
 module Apiary.Params where
 
-import Prelude
+import Control.Category (identity)
 import Data.Foldable (intercalate)
+import Data.Function (($))
+import Data.Functor ((<#>))
 import Data.Maybe (Maybe(..))
+import Data.Semigroup ((<>))
+import Data.Show (show)
 import Data.String (Pattern(..), Replacement(..))
 import Data.String as String
 import Data.Symbol (class IsSymbol, SProxy(..), reflectSymbol)

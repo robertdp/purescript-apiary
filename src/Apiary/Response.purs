@@ -1,14 +1,20 @@
 module Apiary.Response where
 
-import Prelude
 import Apiary.Body (class DecodeBody, decodeBody)
 import Apiary.Status (class ResponseStatus)
 import Apiary.Status as Status
 import Apiary.Types (Apiary, Error(..), Response)
 import Control.Alt ((<|>))
+import Control.Applicative (pure)
+import Control.Category ((<<<))
 import Control.Monad.Error.Class (throwError)
 import Control.Monad.Except (withExcept)
+import Data.Boolean (otherwise)
+import Data.Eq ((==))
+import Data.Function (($))
+import Data.Functor ((<$>))
 import Data.Symbol (class IsSymbol)
+import Data.Unit (Unit, unit)
 import Data.Variant (SProxy(..), Variant, expand, inj)
 import Prim.Row (class Cons, class Union)
 import Prim.RowList (class RowToList, kind RowList, Cons, Nil)

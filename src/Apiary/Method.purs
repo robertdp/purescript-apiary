@@ -1,9 +1,6 @@
-module Apiary.Method
-  ( class RequestMethod
-  , toMethod
-  ) where
+module Apiary.Method where
 
-import Prelude
+import Control.Category ((<<<))
 import Data.Symbol (class IsSymbol, SProxy, reflectSymbol)
 import Milkis (Method)
 import Partial.Unsafe (unsafeCrashWith)

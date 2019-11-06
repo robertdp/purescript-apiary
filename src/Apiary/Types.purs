@@ -1,8 +1,8 @@
 module Apiary.Types where
 
-import Prelude
-
 import Control.Monad.Except (Except)
+import Data.Monoid (mempty)
+import Data.Semigroup (class Semigroup)
 import Effect.Exception as Exception
 import Foreign (MultipleErrors)
 import Milkis (Headers, Method, URL(..), getMethod)
@@ -40,4 +40,5 @@ instance semigroupError :: Semigroup Error where
   append _ err@(DecodeError _ _) = err
   append err@(UnexpectedResponse _) _ = err
 
-type Apiary = Except Error
+type Apiary
+  = Except Error
