@@ -31,18 +31,18 @@ makeRequest route transform params body = runExceptT $ decode =<< fetch request
   request :: Request
   request = transform $ buildRequest route params body
 
-  lift :: forall a. Aff a -> ExceptT Error Aff a
-  lift = withExceptT RuntimeError <<< ExceptT <<< Aff.try
-
-  fetch :: Request -> ExceptT Error Aff Response
-  fetch req = do
-    response <- lift $ Milkis.fetch Milkis.windowFetch req.url $ Record.delete (SProxy :: _ "url") req
-    text <- lift $ Milkis.text response
-    pure
-      { status: Milkis.statusCode response
-      , headers: Milkis.headers response
-      , body: text
-      }
-
   decode :: Response -> ExceptT Error Aff response
   decode text = mapExceptT (pure <<< extract) $ decodeResponse (Proxy :: _ rep) text
+
+lift :: forall a. Aff a -> ExceptT Error Aff a
+lift = withExceptT RuntimeError <<< ExceptT <<< Aff.try
+
+fetch :: Request -> ExceptT Error Aff Response
+fetch req = do
+  response <- lift $ Milkis.fetch Milkis.windowFetch req.url $ Record.delete (SProxy :: _ "url") req
+  text <- lift $ Milkis.text response
+  pure
+    { status: Milkis.statusCode response
+    , headers: Milkis.headers response
+    , body: text
+    }
