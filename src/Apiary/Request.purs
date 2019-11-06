@@ -1,15 +1,13 @@
 module Apiary.Request where
 
 import Prelude
+
 import Apiary.Response (class DecodeResponse, decodeResponse)
-import Apiary.Types (Request)
-import Control.Comonad (extract)
-import Control.Monad.Except (runExcept, throwError)
-import Data.Either (Either(..))
+import Apiary.Types (Error, Request)
+import Control.Monad.Except (runExcept)
+import Data.Either (Either)
 import Data.Symbol (SProxy(..))
-import Effect.Aff (Aff, error)
-import Effect.Class.Console as Console
-import Foreign (renderForeignError)
+import Effect.Aff (Aff)
 import Milkis (fetch, headers, statusCode, text) as Milkis
 import Milkis.Impl.Window (windowFetch) as Milkis
 import Record as Record
@@ -25,8 +23,8 @@ makeRequest :: forall route params body rep response.
   (Request -> Request) ->
   params ->
   body ->
-  Aff response
-makeRequest route transform params body = decode =<< fetch request
+  Aff (Either Error response)
+makeRequest route transform params body = decode <$> fetch request
   where
   request = transform $ buildRequest route params body
 
@@ -39,11 +37,4 @@ makeRequest route transform params body = decode =<< fetch request
       , body: text
       }
 
-  decode text =
-    decodeResponse (Proxy :: _ rep) text
-      # runExcept
-      # case _ of
-          Left errors -> do
-            Console.logShow $ renderForeignError <$> errors
-            throwError $ error $ renderForeignError $ extract errors
-          Right response -> pure response
+  decode = runExcept <<< decodeResponse (Proxy :: _ rep)

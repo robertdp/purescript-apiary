@@ -114,18 +114,3 @@ else instance buildQueryParamsCons ::
 
 encodeQueryParam :: forall name value. EncodeParam name => EncodeParam value => name -> value -> String
 encodeQueryParam name value = encodeParam name <> "=" <> encodeParam value
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -68,6 +68,6 @@ else instance responseStatusNotFound :: ResponseStatus "notFound" where
 else instance responseStatusConflict :: ResponseStatus "conflict" where
   toStatus _ = conflict
 else instance responseStatusFail ::
-  Fail (Beside (Text "Invalid response status: ") (Text status)) =>
+  Fail (Beside (Text "Unsupported response status: ") (Text status)) =>
   ResponseStatus status where
   toStatus _ = unsafeCrashWith "impossible"

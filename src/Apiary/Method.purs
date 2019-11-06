@@ -1,4 +1,7 @@
-module Apiary.Method where
+module Apiary.Method
+  ( class RequestMethod
+  , toMethod
+  ) where
 
 import Prelude
 import Data.Symbol (class IsSymbol, SProxy, reflectSymbol)
