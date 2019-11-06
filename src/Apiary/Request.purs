@@ -3,11 +3,13 @@ module Apiary.Request where
 import Prelude
 
 import Apiary.Response (class DecodeResponse, decodeResponse)
-import Apiary.Types (Error, Request)
-import Control.Monad.Except (runExcept)
+import Apiary.Types (Error(..), Request, Response)
+import Control.Comonad (extract)
+import Control.Monad.Except (ExceptT(..), mapExceptT, runExceptT, withExceptT)
 import Data.Either (Either)
 import Data.Symbol (SProxy(..))
 import Effect.Aff (Aff)
+import Effect.Aff as Aff
 import Milkis (fetch, headers, statusCode, text) as Milkis
 import Milkis.Impl.Window (windowFetch) as Milkis
 import Record as Record
@@ -24,17 +26,23 @@ makeRequest :: forall route params body rep response.
   params ->
   body ->
   Aff (Either Error response)
-makeRequest route transform params body = decode <$> fetch request
+makeRequest route transform params body = runExceptT $ decode =<< fetch request
   where
+  request :: Request
   request = transform $ buildRequest route params body
 
+  lift :: forall a. Aff a -> ExceptT Error Aff a
+  lift = withExceptT RuntimeError <<< ExceptT <<< Aff.try
+
+  fetch :: Request -> ExceptT Error Aff Response
   fetch req = do
-    response <- Milkis.fetch Milkis.windowFetch req.url $ Record.delete (SProxy :: _ "url") req
-    text <- Milkis.text response
+    response <- lift $ Milkis.fetch Milkis.windowFetch req.url $ Record.delete (SProxy :: _ "url") req
+    text <- lift $ Milkis.text response
     pure
       { status: Milkis.statusCode response
       , headers: Milkis.headers response
       , body: text
       }
 
-  decode = runExcept <<< decodeResponse (Proxy :: _ rep)
+  decode :: Response -> ExceptT Error Aff response
+  decode text = mapExceptT (pure <<< extract) $ decodeResponse (Proxy :: _ rep) text
