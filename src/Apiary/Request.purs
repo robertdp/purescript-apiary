@@ -5,11 +5,11 @@ import Prelude
 import Apiary.Response (class DecodeResponse, decodeResponse)
 import Apiary.Types (Error(..), Request, Response)
 import Control.Comonad (extract)
+import Control.Monad.Error.Class (try)
 import Control.Monad.Except (ExceptT(..), mapExceptT, runExceptT, withExceptT)
 import Data.Either (Either)
 import Data.Symbol (SProxy(..))
 import Effect.Aff (Aff)
-import Effect.Aff as Aff
 import Milkis (fetch, headers, statusCode, text) as Milkis
 import Milkis.Impl.Window (windowFetch) as Milkis
 import Record as Record
@@ -35,7 +35,7 @@ makeRequest route transform params body = runExceptT $ decode =<< fetch request
   decode text = mapExceptT (pure <<< extract) $ decodeResponse (Proxy :: _ rep) text
 
 lift :: Aff ~> ExceptT Error Aff
-lift = withExceptT RuntimeError <<< ExceptT <<< Aff.try
+lift = withExceptT RuntimeError <<< ExceptT <<< try
 
 fetch :: Request -> ExceptT Error Aff Response
 fetch req = do
