@@ -34,7 +34,7 @@ makeRequest route transform params body = runExceptT $ decode =<< fetch request
   decode :: Response -> ExceptT Error Aff response
   decode text = mapExceptT (pure <<< extract) $ decodeResponse (Proxy :: _ rep) text
 
-lift :: forall a. Aff a -> ExceptT Error Aff a
+lift :: Aff ~> ExceptT Error Aff
 lift = withExceptT RuntimeError <<< ExceptT <<< Aff.try
 
 fetch :: Request -> ExceptT Error Aff Response
