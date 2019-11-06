@@ -1,10 +1,13 @@
 module Apiary.Params where
 
 import Prelude
+
+import Data.Either (either)
 import Data.Foldable (intercalate)
 import Data.Maybe (Maybe(..))
-import Data.String (Pattern(..), Replacement(..))
 import Data.String as String
+import Data.String.Regex as Regex
+import Data.String.Regex.Flags as RegexFlags
 import Data.Symbol (class IsSymbol, SProxy(..), reflectSymbol)
 import Global.Unsafe (unsafeEncodeURIComponent)
 import Prim.Row (class Cons, class Nub, class Union)
@@ -61,12 +64,13 @@ instance writePathParamsCons ::
   ) =>
   WritePathParams params (Cons name value paramTail) where
   writePathParams _ params url =
-    writePathParams (RLProxy :: _ paramTail) (coerceParams params)
-      $ String.replace (Pattern pattern) (Replacement replacement) url
+    writePathParams (RLProxy :: _ paramTail) (coerceParams params) replaced
     where
     coerceParams = unsafeCoerce :: Record params -> Record params'
 
-    pattern = ":" <> reflectSymbol (SProxy :: _ name)
+    regex = Regex.regex ("\\b\\:" <> reflectSymbol (SProxy :: _ name) <> "\\b") RegexFlags.global
+
+    replaced = either (const url) (\pattern -> Regex.replace pattern replacement url) regex
 
     replacement = encodeParam $ Record.get (SProxy :: _ name) params
 
