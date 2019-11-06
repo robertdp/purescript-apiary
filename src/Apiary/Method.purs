@@ -1,6 +1,6 @@
 module Apiary.Method where
 
-import Control.Category ((<<<))
+import Prelude
 import Data.Symbol (class IsSymbol, SProxy, reflectSymbol)
 import Milkis (Method)
 import Partial.Unsafe (unsafeCrashWith)

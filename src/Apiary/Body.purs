@@ -1,8 +1,6 @@
 module Apiary.Body where
 
-import Control.Applicative (pure)
-import Control.Category (identity)
-import Data.Unit (Unit, unit)
+import Prelude
 import Foreign (F)
 import Simple.JSON (class ReadForeign, class WriteForeign, readJSON', writeJSON)
 import Type.Proxy (Proxy)

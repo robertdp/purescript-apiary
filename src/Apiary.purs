@@ -1,17 +1,13 @@
 module Apiary where
 
+import Prelude
 import Apiary.Request (class BuildRequest, buildRequest)
 import Apiary.Response (class DecodeResponse, decodeResponse)
 import Apiary.Types (Error(..), Request, Response)
-import Control.Applicative (pure)
-import Control.Category ((<<<))
 import Control.Comonad (extract)
-import Control.Monad (bind, (=<<))
 import Control.Monad.Error.Class (try)
 import Control.Monad.Except (ExceptT(..), mapExceptT, runExceptT, withExceptT)
 import Data.Either (Either)
-import Data.Function (($))
-import Data.NaturalTransformation (type (~>))
 import Data.Symbol (SProxy(..))
 import Effect.Aff (Aff)
 import Milkis (fetch, headers, statusCode, text) as Milkis

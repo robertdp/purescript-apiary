@@ -1,12 +1,12 @@
 module Apiary.Route where
 
+import Prelude
 import Apiary.Body (class EncodeBody, encodeBody)
 import Apiary.Params (class WriteParams, writeParams)
 import Apiary.Request (class BuildRequest)
 import Apiary.Response (class DecodeResponse)
 import Apiary.Types (Request)
 import Data.Symbol (class IsSymbol, reflectSymbol)
-import Data.Unit (Unit)
 import Data.Variant (SProxy(..))
 import Foreign.Object as Object
 import Prim.Row (class Nub, class Union)

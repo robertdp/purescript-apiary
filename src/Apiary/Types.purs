@@ -1,8 +1,7 @@
 module Apiary.Types where
 
+import Prelude
 import Control.Monad.Except (Except)
-import Data.Monoid (mempty)
-import Data.Semigroup (class Semigroup)
 import Effect.Exception as Exception
 import Foreign (MultipleErrors)
 import Milkis (Headers, Method, URL(..), getMethod)
