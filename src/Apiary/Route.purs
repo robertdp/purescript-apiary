@@ -10,7 +10,6 @@ import Data.Symbol (class IsSymbol, reflectSymbol)
 import Data.Variant (SProxy(..))
 import Foreign.Object as Object
 import Prim.Row (class Nub, class Union)
-import Type.Equality (class TypeEquals)
 import Type.Proxy (Proxy(..))
 import Unsafe.Coerce (unsafeCoerce)
 
@@ -29,13 +28,6 @@ class PrepareSpec spec prepared | spec -> prepared
 instance prepareSpec ::
   ( Union spec SpecDefaults specWithDefaults
   , Nub specWithDefaults prepared
-  , TypeEquals
-      (Record prepared)
-      { params :: params
-      , query :: query
-      , body :: body
-      , response :: response
-      }
   ) =>
   PrepareSpec (Record spec) (Record prepared)
 
