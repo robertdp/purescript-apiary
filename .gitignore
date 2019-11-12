@@ -2,7 +2,8 @@
 /node_modules/
 /.pulp-cache/
 /output/
-/generated-docs/
+/generated-docs/md/*
+!/generated-docs/md/Apiary.*
 /.psc-package/
 /.psc*
 /.purs*
