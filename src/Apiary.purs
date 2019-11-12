@@ -40,14 +40,8 @@ lift :: Aff ~> ExceptT Error Aff
 lift = withExceptT RuntimeError <<< ExceptT <<< try
 
 fetch :: Request -> ExceptT Error Aff Response
-fetch req = do
-  let
-    options =
-      { method: req.method
-      , headers: req.headers
-      , body: req.body
-      }
-  response <- lift $ Milkis.fetch Milkis.windowFetch req.url options
+fetch { method, url, headers, body } = do
+  response <- lift $ Milkis.fetch Milkis.windowFetch url { method, headers, body }
   text <- lift $ Milkis.text response
   pure
     { status: Milkis.statusCode response
