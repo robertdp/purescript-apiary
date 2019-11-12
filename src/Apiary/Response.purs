@@ -56,7 +56,7 @@ instance decodeResponseVariantCons ::
     statusCode = Status.statusCode $ Status.toStatus status
 
     decodeStatus
-      | response.status == statusCode = withExcept (DecodeError response) $ decodeBody (Proxy :: _ rep) response.body
+      | response.status == statusCode = withExcept (flip DecodeError response) $ decodeBody (Proxy :: _ rep) response.body
       | otherwise = throwError $ UnexpectedResponse response
 
     decodeRest = decodeResponseVariant (RLProxy :: _ responseList) response

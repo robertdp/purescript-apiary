@@ -29,7 +29,7 @@ type Response
 
 data Error
   = RuntimeError Exception.Error
-  | DecodeError Response MultipleErrors
+  | DecodeError MultipleErrors Response
   | UnexpectedResponse Response
 
 instance semigroupError :: Semigroup Error where

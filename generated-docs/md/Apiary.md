@@ -74,7 +74,7 @@ type Request = { body :: String, headers :: Headers, method :: Method, url :: UR
 ``` purescript
 data Error
   = RuntimeError Error
-  | DecodeError Response MultipleErrors
+  | DecodeError MultipleErrors Response
   | UnexpectedResponse Response
 ```
 

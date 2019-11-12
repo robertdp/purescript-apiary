@@ -23,7 +23,7 @@ type Response = { body :: String, headers :: Headers, status :: Int }
 ``` purescript
 data Error
   = RuntimeError Error
-  | DecodeError Response MultipleErrors
+  | DecodeError MultipleErrors Response
   | UnexpectedResponse Response
 ```
 
