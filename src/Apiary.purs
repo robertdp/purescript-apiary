@@ -1,4 +1,9 @@
-module Apiary where
+module Apiary
+  ( makeRequest
+  , module Apiary.Request
+  , module Apiary.Response
+  , module Apiary.Types
+  ) where
 
 import Prelude
 import Apiary.Request (class BuildRequest, buildRequest)
