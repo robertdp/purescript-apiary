@@ -37,11 +37,13 @@ fetch :: Request -> ExceptT Error Aff Response
 fetch request@{ method, url, headers } = do
   response <-
     lift case request.body of
-      "" -> Milkis.fetch Milkis.windowFetch url { method, headers }
-      body -> Milkis.fetch Milkis.windowFetch url { method, headers, body }
+      "" -> fetch' url { method, headers }
+      body -> fetch' url { method, headers, body }
   text <- lift $ Milkis.text response
   pure
     { status: Milkis.statusCode response
     , headers: Milkis.headers response
     , body: text
     }
+  where
+  fetch' = Milkis.fetch Milkis.windowFetch
