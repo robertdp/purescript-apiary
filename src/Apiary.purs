@@ -1,13 +1,13 @@
 module Apiary
   ( makeRequest
-  , module Apiary.Request
-  , module Apiary.Response
+  , module Apiary.Route
   , module Apiary.Types
   ) where
 
 import Prelude
 import Apiary.Request (class BuildRequest, buildRequest)
 import Apiary.Response (class DecodeResponse, decodeResponse)
+import Apiary.Route (DELETE, GET, PATCH, POST, PUT, Route(..))
 import Apiary.Types (Error(..), Request, Response)
 import Control.Comonad (extract)
 import Control.Monad.Error.Class (try)

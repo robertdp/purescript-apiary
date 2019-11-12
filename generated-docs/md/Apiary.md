@@ -6,42 +6,53 @@
 makeRequest :: forall route params body rep response. BuildRequest route params body rep => DecodeResponse rep response => route -> (Request -> Request) -> params -> body -> Aff (Either Error response)
 ```
 
-#### `lift`
+
+### Re-exported from Apiary.Route:
+
+#### `Route`
 
 ``` purescript
-lift :: Aff ~> (ExceptT Error Aff)
-```
-
-#### `fetch`
-
-``` purescript
-fetch :: Request -> ExceptT Error Aff Response
-```
-
-
-### Re-exported from Apiary.Request:
-
-#### `BuildRequest`
-
-``` purescript
-class BuildRequest route params body rep | route -> params body rep where
-  buildRequest :: route -> params -> body -> Request
-```
-
-### Re-exported from Apiary.Response:
-
-#### `DecodeResponse`
-
-``` purescript
-class DecodeResponse rep response | rep -> response where
-  decodeResponse :: Proxy rep -> Response -> Apiary response
+data Route (method :: Symbol) (path :: Symbol) spec
+  = Route
 ```
 
 ##### Instances
 ``` purescript
-DecodeResponse Unit Unit
-DecodeResponse String String
-(RowToList responses responseList, DecodeResponseVariant result responseList) => DecodeResponse (Record responses) (Variant result)
+(PrepareSpec spec { body :: Unit, params :: params, query :: query, response :: response }, WriteParams params query fullParams, DecodeResponse response response', IsSymbol path) => BuildRequest (Route "GET" path spec) fullParams Unit response
+(PrepareSpec spec { body :: body, params :: params, query :: query, response :: response }, WriteParams params query fullParams, EncodeBody body body', DecodeResponse response response', IsSymbol path) => BuildRequest (Route "PATCH" path spec) fullParams body' response
+(PrepareSpec spec { body :: body, params :: params, query :: query, response :: response }, WriteParams params query fullParams, EncodeBody body body', DecodeResponse response response', IsSymbol path) => BuildRequest (Route "POST" path spec) fullParams body' response
+(PrepareSpec spec { body :: body, params :: params, query :: query, response :: response }, WriteParams params query fullParams, EncodeBody body body', DecodeResponse response response', IsSymbol path) => BuildRequest (Route "PUT" path spec) fullParams body' response
+(PrepareSpec spec { body :: body, params :: params, query :: query, response :: response }, WriteParams params query fullParams, EncodeBody body body', DecodeResponse response response', IsSymbol path) => BuildRequest (Route "DELETE" path spec) fullParams body' response
+```
+
+#### `PUT`
+
+``` purescript
+type PUT = Route "PUT"
+```
+
+#### `POST`
+
+``` purescript
+type POST = Route "POST"
+```
+
+#### `PATCH`
+
+``` purescript
+type PATCH = Route "PATCH"
+```
+
+#### `GET`
+
+``` purescript
+type GET = Route "GET"
+```
+
+#### `DELETE`
+
+``` purescript
+type DELETE = Route "DELETE"
 ```
 
 ### Re-exported from Apiary.Types:
