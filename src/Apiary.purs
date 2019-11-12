@@ -35,9 +35,9 @@ lift = withExceptT RuntimeError <<< ExceptT <<< try
 
 fetch :: Request -> ExceptT Error Aff Response
 fetch request@{ method, url, headers } = do
-  response <- case request.body of
-    "" -> lift $ Milkis.fetch Milkis.windowFetch url { method, headers }
-    body -> lift $ Milkis.fetch Milkis.windowFetch url { method, headers, body }
+  response <- lift case request.body of
+    "" -> Milkis.fetch Milkis.windowFetch url { method, headers }
+    body -> Milkis.fetch Milkis.windowFetch url { method, headers, body }
   text <- lift $ Milkis.text response
   pure
     { status: Milkis.statusCode response
