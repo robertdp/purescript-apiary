@@ -32,6 +32,11 @@ data Error
   | DecodeError MultipleErrors Response
   | UnexpectedResponse Response
 
+instance showError :: Show Error where
+  show (RuntimeError err) = "(RuntimeError " <> show err <> ")"
+  show (DecodeError err res) = "(DecodeError " <> show err <> " " <> show res <> ")"
+  show (UnexpectedResponse res) = "(RuntimeError " <> show res <> ")"
+
 instance semigroupError :: Semigroup Error where
   append err@(RuntimeError _) _ = err
   append _ err@(RuntimeError _) = err

@@ -29,6 +29,7 @@ data Error
 
 ##### Instances
 ``` purescript
+Show Error
 Semigroup Error
 ```
 
