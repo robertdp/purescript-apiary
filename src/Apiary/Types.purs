@@ -1,6 +1,7 @@
 module Apiary.Types where
 
 import Prelude
+
 import Control.Monad.Except (Except)
 import Effect.Exception as Exception
 import Foreign (MultipleErrors)

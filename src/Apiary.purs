@@ -1,6 +1,7 @@
 module Apiary where
 
 import Prelude
+
 import Apiary.Request (class BuildRequest, buildRequest)
 import Apiary.Response (class DecodeResponse, decodeResponse)
 import Apiary.Types (Error(..), Request, Response)
@@ -8,12 +9,15 @@ import Control.Comonad (extract)
 import Control.Monad.Error.Class (try)
 import Control.Monad.Except (ExceptT(..), mapExceptT, runExceptT, withExceptT)
 import Data.Either (Either)
+import Data.String as String
 import Data.Symbol (SProxy(..))
 import Effect.Aff (Aff)
 import Milkis (fetch, headers, statusCode, text) as Milkis
 import Milkis.Impl.Window (windowFetch) as Milkis
 import Record as Record
+import Simple.JSON (undefined)
 import Type.Proxy (Proxy(..))
+import Unsafe.Coerce (unsafeCoerce)
 
 makeRequest ::
   forall route params body rep response.
@@ -27,7 +31,10 @@ makeRequest ::
 makeRequest route transform params body = runExceptT $ decode =<< fetch request
   where
   request :: Request
-  request = transform $ buildRequest route params body
+  request =
+    buildRequest route params body
+      # transform
+      # removeEmptyBody
 
   decode :: Response -> ExceptT Error Aff response
   decode text = mapExceptT (pure <<< extract) $ decodeResponse (Proxy :: _ rep) text
@@ -44,3 +51,11 @@ fetch req = do
     , headers: Milkis.headers response
     , body: text
     }
+
+removeEmptyBody :: Request -> Request
+removeEmptyBody =
+  Record.modify (SProxy :: _ "body") \body ->
+    if String.null body then
+      unsafeCoerce undefined
+    else
+      body
