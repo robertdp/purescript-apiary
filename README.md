@@ -48,14 +48,16 @@ This will give us inferred types equivalent to
 ```purescript
 listUsers ::
   { sortBy :: Maybe UserSort, sortDir :: Maybe SortDir } ->
-  Aff (Variant ( ok :: Array User ))
+  Aff (Either Apiary.Error (Variant ( ok :: Array User )))
 
 createNewUser ::
   { name :: String, email :: String } ->
   Aff
-    (Variant
-      ( ok :: User
-      , badRequest :: { errors :: Array { field :: String, message :: String } }
+    (Either Apiary.Error
+      (Variant
+        ( ok :: User
+        , badRequest :: { errors :: Array { field :: String, message :: String } }
+        )
       )
     )
 ```
