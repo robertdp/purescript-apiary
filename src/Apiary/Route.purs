@@ -1,7 +1,6 @@
 module Apiary.Route where
 
 import Prelude
-
 import Apiary.Body (class EncodeBody, encodeBody)
 import Apiary.Params (class WriteParams, writeParams)
 import Apiary.Request (class BuildRequest)

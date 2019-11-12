@@ -1,7 +1,6 @@
 module Apiary where
 
 import Prelude
-
 import Apiary.Request (class BuildRequest, buildRequest)
 import Apiary.Response (class DecodeResponse, decodeResponse)
 import Apiary.Types (Error(..), Request, Response)
@@ -10,11 +9,9 @@ import Control.Monad.Error.Class (try)
 import Control.Monad.Except (ExceptT(..), mapExceptT, runExceptT, withExceptT)
 import Data.Either (Either)
 import Data.String as String
-import Data.Symbol (SProxy(..))
 import Effect.Aff (Aff)
 import Milkis (fetch, headers, statusCode, text) as Milkis
 import Milkis.Impl.Window (windowFetch) as Milkis
-import Record as Record
 import Simple.JSON (undefined)
 import Type.Proxy (Proxy(..))
 import Unsafe.Coerce (unsafeCoerce)
@@ -44,7 +41,13 @@ lift = withExceptT RuntimeError <<< ExceptT <<< try
 
 fetch :: Request -> ExceptT Error Aff Response
 fetch req = do
-  response <- lift $ Milkis.fetch Milkis.windowFetch req.url $ Record.delete (SProxy :: _ "url") req
+  let
+    options =
+      { method: req.method
+      , headers: req.headers
+      , body: req.body
+      }
+  response <- lift $ Milkis.fetch Milkis.windowFetch req.url options
   text <- lift $ Milkis.text response
   pure
     { status: Milkis.statusCode response
@@ -53,9 +56,8 @@ fetch req = do
     }
 
 removeEmptyBody :: Request -> Request
-removeEmptyBody =
-  Record.modify (SProxy :: _ "body") \body ->
-    if String.null body then
-      unsafeCoerce undefined
-    else
-      body
+removeEmptyBody request@{ body } =
+  if String.null body then
+    request { body = unsafeCoerce undefined }
+  else
+    request

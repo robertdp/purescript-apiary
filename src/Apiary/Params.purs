@@ -1,7 +1,6 @@
 module Apiary.Params where
 
 import Prelude
-
 import Data.Either (either)
 import Data.Foldable (intercalate)
 import Data.Maybe (Maybe(..))
@@ -63,8 +62,7 @@ instance writePathParamsCons ::
   , WritePathParams params' paramTail
   ) =>
   WritePathParams params (Cons name value paramTail) where
-  writePathParams _ params url =
-    writePathParams (RLProxy :: _ paramTail) (coerceParams params) replaced
+  writePathParams _ params url = writePathParams (RLProxy :: _ paramTail) (coerceParams params) replaced
     where
     coerceParams = unsafeCoerce :: Record params -> Record params'
 
@@ -111,10 +109,9 @@ else instance buildQueryParamsCons ::
 
     name = reflectSymbol name'
 
-    query =
-      case Record.get name' params of
-        Nothing -> []
-        Just value -> [ encodeQueryParam name value ]
+    query = case Record.get name' params of
+      Nothing -> []
+      Just value -> [ encodeQueryParam name value ]
 
 encodeQueryParam :: forall name value. EncodeParam name => EncodeParam value => name -> value -> String
 encodeQueryParam name value = encodeParam name <> "=" <> encodeParam value
