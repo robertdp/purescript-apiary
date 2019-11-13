@@ -61,3 +61,26 @@ createNewUser ::
       )
     )
 ```
+
+Here is an example with URL modification and JWT-based authorisation inspired by some production code:
+
+```purescript
+makeSecureRequest ::
+  forall m r route params body rep response.
+  MonadAff m =>
+  MonadAsk { baseUrl :: String, token :: String | r } m =>
+  Apiary.BuildRequest route params body rep =>
+  Apiary.DecodeResponse rep response =>
+  route ->
+  params ->
+  body ->
+  m (Either Apiary.Error response)
+makeSecureRequest route params body = do
+  env <- ask
+  liftAff $ Apiary.makeRequest route (addBaseUrl env.baseUrl <<< addToken env.token) params body
+  where
+  addToken token request@{ headers } =
+    request { headers = Object.insert "Authorization" ("Bearer " <> token) headers }
+  addBaseUrl baseUrl request@{ url: URL url } =
+    request { url = URL (baseUrl <> url) }
+```
