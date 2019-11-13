@@ -87,11 +87,8 @@ makeSecureRequest route params body = do
     request { url = URL (baseUrl <> url) }
 
 listUsers ::
-  forall m r.
-  MonadAff m =>
-  MonadAsk { baseUrl :: String, token :: String | r } m =>
   { sortBy :: Maybe UserSort, sortDir :: Maybe SortDir } ->
-  m (Either Apiary.Error (Variant ( ok :: Array User )))
+  AppM (Either Apiary.Error (Variant ( ok :: Array User )))
 listUsers params =
   makeSecureRequest (Route :: ListUsers) identity params unit
 ```
