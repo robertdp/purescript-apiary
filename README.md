@@ -86,6 +86,8 @@ makeSecureRequest route params body = do
   addBaseUrl baseUrl request@{ url: URL url } =
     request { url = URL (baseUrl <> url) }
 
+type AppM = ReaderT { baseUrl :: String, token :: String } Aff
+
 listUsers ::
   { sortBy :: Maybe UserSort, sortDir :: Maybe SortDir } ->
   AppM (Either Apiary.Error (Variant ( ok :: Array User )))
