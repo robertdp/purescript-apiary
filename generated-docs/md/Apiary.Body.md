@@ -1,17 +1,19 @@
 ## Module Apiary.Body
 
-#### `DecodeBody`
+#### `MediaCodec`
 
 ``` purescript
-class DecodeBody rep a | rep -> a where
-  decodeBody :: Proxy rep -> String -> F a
+class MediaCodec rep a | rep -> a where
+  mediaType :: Proxy rep -> Maybe MediaType
+  encodeMedia :: Proxy rep -> a -> String
+  decodeMedia :: Proxy rep -> String -> F a
 ```
 
 ##### Instances
 ``` purescript
-DecodeBody Unit Unit
-DecodeBody String String
-(ReadForeign a) => DecodeBody (JSON a) a
+MediaCodec Unit Unit
+MediaCodec String String
+(WriteForeign a, ReadForeign a) => MediaCodec (JSON a) a
 ```
 
 #### `JSON`
@@ -23,22 +25,7 @@ newtype JSON a
 
 ##### Instances
 ``` purescript
-(ReadForeign a) => DecodeBody (JSON a) a
-(WriteForeign a) => EncodeBody (JSON a) a
-```
-
-#### `EncodeBody`
-
-``` purescript
-class EncodeBody rep a | rep -> a where
-  encodeBody :: Proxy rep -> a -> String
-```
-
-##### Instances
-``` purescript
-EncodeBody Unit Unit
-EncodeBody String String
-(WriteForeign a) => EncodeBody (JSON a) a
+(WriteForeign a, ReadForeign a) => MediaCodec (JSON a) a
 ```
 
 

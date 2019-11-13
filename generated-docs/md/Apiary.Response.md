@@ -24,7 +24,7 @@ class DecodeResponseVariant (response :: # Type) (responseList :: RowList) | res
 ##### Instances
 ``` purescript
 DecodeResponseVariant () Nil
-(IsSymbol status, ResponseStatus status, Cons status decoded variant' variant, DecodeResponseVariant variant' responseList, Union variant' a variant, DecodeBody rep decoded) => DecodeResponseVariant variant (Cons status rep responseList)
+(IsSymbol status, ResponseStatus status, Cons status decoded variant' variant, DecodeResponseVariant variant' responseList, Union variant' a variant, MediaCodec rep decoded) => DecodeResponseVariant variant (Cons status rep responseList)
 ```
 
 
