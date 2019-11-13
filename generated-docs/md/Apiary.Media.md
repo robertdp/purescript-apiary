@@ -1,4 +1,4 @@
-## Module Apiary.Body
+## Module Apiary.Media
 
 #### `MediaCodec`
 

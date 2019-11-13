@@ -1,4 +1,4 @@
-module Apiary.Body where
+module Apiary.Media where
 
 import Prelude
 import Data.Maybe (Maybe(..))

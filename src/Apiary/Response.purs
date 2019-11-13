@@ -1,7 +1,7 @@
 module Apiary.Response where
 
 import Prelude
-import Apiary.Body (class MediaCodec, decodeMedia)
+import Apiary.Media (class MediaCodec, decodeMedia)
 import Apiary.Status (class ResponseStatus)
 import Apiary.Status as Status
 import Apiary.Types (Apiary, Error(..), Response)
