@@ -1,11 +1,12 @@
 module Apiary.Route where
 
 import Prelude
-import Apiary.Body (class EncodeBody, encodeBody)
+import Apiary.Body (class MediaCodec, encodeMedia, mediaType)
 import Apiary.Params (class WriteParams, writeParams)
 import Apiary.Request (class BuildRequest)
 import Apiary.Response (class DecodeResponse)
 import Apiary.Types (Request)
+import Data.Maybe (maybe)
 import Data.Symbol (class IsSymbol, reflectSymbol)
 import Data.Variant (SProxy(..))
 import Foreign.Object as Object
@@ -69,7 +70,7 @@ else instance buildRequestRoutePATCH ::
       , response :: response
       }
   , WriteParams params query fullParams
-  , EncodeBody body body'
+  , MediaCodec body body'
   , DecodeResponse response response'
   , IsSymbol path
   ) =>
@@ -84,7 +85,7 @@ else instance buildRequestRoutePOST ::
       , response :: response
       }
   , WriteParams params query fullParams
-  , EncodeBody body body'
+  , MediaCodec body body'
   , DecodeResponse response response'
   , IsSymbol path
   ) =>
@@ -99,7 +100,7 @@ else instance buildRequestRoutePUT ::
       , response :: response
       }
   , WriteParams params query fullParams
-  , EncodeBody body body'
+  , MediaCodec body body'
   , DecodeResponse response response'
   , IsSymbol path
   ) =>
@@ -114,7 +115,7 @@ else instance buildRequestRouteDELETE ::
       , response :: response
       }
   , WriteParams params query fullParams
-  , EncodeBody body body'
+  , MediaCodec body body'
   , DecodeResponse response response'
   , IsSymbol path
   ) =>
@@ -125,7 +126,7 @@ buildRequest_ ::
   forall path pathParams queryParams params bodyRep body.
   IsSymbol path =>
   WriteParams pathParams queryParams params =>
-  EncodeBody bodyRep body =>
+  MediaCodec bodyRep body =>
   String ->
   SProxy path ->
   Proxy pathParams ->
@@ -137,6 +138,6 @@ buildRequest_ ::
 buildRequest_ method path pathParams queryParams bodyRep params body =
   { method: unsafeCoerce method
   , url: unsafeCoerce (writeParams pathParams queryParams params (reflectSymbol path))
-  , headers: Object.empty
-  , body: encodeBody bodyRep body
+  , headers: maybe Object.empty (Object.singleton "Content-Type" <<< show) (mediaType bodyRep)
+  , body: encodeMedia bodyRep body
   }

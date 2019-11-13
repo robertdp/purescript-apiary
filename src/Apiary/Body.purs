@@ -1,33 +1,32 @@
 module Apiary.Body where
 
 import Prelude
+import Data.Maybe (Maybe(..))
+import Data.MediaType (MediaType)
+import Data.MediaType.Common (applicationJSON)
 import Foreign (F)
 import Simple.JSON (class ReadForeign, class WriteForeign, readJSON', writeJSON)
 import Type.Proxy (Proxy)
 
-class DecodeBody rep a | rep -> a where
-  decodeBody :: Proxy rep -> String -> F a
-
-instance decodeBodyUnit :: DecodeBody Unit Unit where
-  decodeBody _ _ = pure unit
-
-instance decodeBodyString :: DecodeBody String String where
-  decodeBody _ = pure
+class MediaCodec rep a | rep -> a where
+  mediaType :: Proxy rep -> Maybe MediaType
+  encodeMedia :: Proxy rep -> a -> String
+  decodeMedia :: Proxy rep -> String -> F a
 
 newtype JSON a
   = JSON a
 
-instance decodeBodyJSON :: (ReadForeign a) => DecodeBody (JSON a) a where
-  decodeBody _ = readJSON'
+instance mediaCodecUnit :: MediaCodec Unit Unit where
+  mediaType _ = Nothing
+  encodeMedia _ _ = ""
+  decodeMedia _ _ = pure unit
 
-class EncodeBody rep a | rep -> a where
-  encodeBody :: Proxy rep -> a -> String
+instance mediaCodecString :: MediaCodec String String where
+  mediaType _ = Nothing
+  encodeMedia _ a = a
+  decodeMedia _ a = pure a
 
-instance encodeBodyUnit :: EncodeBody Unit Unit where
-  encodeBody _ _ = ""
-
-instance encodeBodyString :: EncodeBody String String where
-  encodeBody _ = identity
-
-instance encodeBodyJSON :: (WriteForeign a) => EncodeBody (JSON a) a where
-  encodeBody _ = writeJSON
+instance mediaCodecJSON :: (WriteForeign a, ReadForeign a) => MediaCodec (JSON a) a where
+  mediaType _ = Just applicationJSON
+  encodeMedia _ = writeJSON
+  decodeMedia _ = readJSON'

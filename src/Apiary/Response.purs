@@ -1,7 +1,7 @@
 module Apiary.Response where
 
 import Prelude
-import Apiary.Body (class DecodeBody, decodeBody)
+import Apiary.Body (class MediaCodec, decodeMedia)
 import Apiary.Status (class ResponseStatus)
 import Apiary.Status as Status
 import Apiary.Types (Apiary, Error(..), Response)
@@ -44,7 +44,7 @@ instance decodeResponseVariantCons ::
   , Cons status decoded variant' variant
   , DecodeResponseVariant variant' responseList
   , Union variant' a variant
-  , DecodeBody rep decoded
+  , MediaCodec rep decoded
   ) =>
   DecodeResponseVariant variant (Cons status rep responseList) where
   decodeResponseVariant _ response =
@@ -53,10 +53,10 @@ instance decodeResponseVariantCons ::
     where
     status = SProxy :: _ status
 
-    statusCode = Status.statusCode $ Status.toStatus status
+    statusCode = Status.statusCode (Status.toStatus status)
 
     decodeStatus
-      | response.status == statusCode = withExcept (flip DecodeError response) $ decodeBody (Proxy :: _ rep) response.body
+      | response.status == statusCode = withExcept (flip DecodeError response) $ decodeMedia (Proxy :: _ rep) response.body
       | otherwise = throwError $ UnexpectedResponse response
 
     decodeRest = decodeResponseVariant (RLProxy :: _ responseList) response
