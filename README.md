@@ -38,9 +38,11 @@ type CreateNewUser
       }
     }
 
-listUsers params = Apiary.makeRequest (Route :: ListUsers) identity params unit
+listUsers params =
+  Apiary.makeRequest (Route :: ListUsers) identity params unit
 
-createNewUser body = Apiary.makeRequest (Route :: CreateNewUser) identity {} body
+createNewUser body =
+  Apiary.makeRequest (Route :: CreateNewUser) identity {} body
 ```
 
 This will give us inferred types equivalent to
@@ -83,4 +85,13 @@ makeSecureRequest route params body = do
     request { headers = Object.insert "Authorization" ("Bearer " <> token) headers }
   addBaseUrl baseUrl request@{ url: URL url } =
     request { url = URL (baseUrl <> url) }
+
+listUsers ::
+  forall m r.
+  MonadAff m =>
+  MonadAsk { baseUrl :: String, token :: String | r } m =>
+  { sortBy :: Maybe UserSort, sortDir :: Maybe SortDir } ->
+  m (Either Apiary.Error (Variant ( ok :: Array User )))
+listUsers params =
+  makeSecureRequest (Route :: ListUsers) identity params unit
 ```
