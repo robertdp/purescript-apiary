@@ -86,11 +86,11 @@ makeSecureRequest route params body = do
   addBaseUrl baseUrl request@{ url: URL url } =
     request { url = URL (baseUrl <> url) }
 
-type AppM e = ExceptT e (ReaderT { baseUrl :: String, token :: String } Aff)
+type AppM = ReaderT { baseUrl :: String, token :: String } Aff
 
 listUsers ::
   { sortBy :: Maybe UserSort, sortDir :: Maybe SortDir } ->
-  AppM Apiary.Error (Variant ( ok :: Array User ))
+  AppM (Either Apiary.Error (Variant ( ok :: Array User )))
 listUsers params =
-  ExceptT $ makeSecureRequest (Route :: ListUsers) identity params unit
+  makeSecureRequest (Route :: ListUsers) identity params unit
 ```
