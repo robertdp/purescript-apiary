@@ -14,7 +14,8 @@
     "spago": "^0.10.0"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "spago build && npm run docs",
+    "docs": "spago docs --format markdown"
   },
   "repository": {
     "type": "git",
