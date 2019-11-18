@@ -2,7 +2,7 @@ module Apiary.Route where
 
 import Prelude
 import Apiary.Media (class MediaCodec, encodeMedia, mediaType)
-import Apiary.Params (class WriteParams, writeParams)
+import Apiary.Url (class WriteParams, writeParams)
 import Apiary.Request (class BuildRequest)
 import Apiary.Response (class DecodeResponse)
 import Apiary.Types (Request)

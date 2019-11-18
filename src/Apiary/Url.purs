@@ -1,29 +1,39 @@
-module Apiary.Params where
+module Apiary.Url where
 
 import Prelude
 import Data.Either (either)
 import Data.Foldable (intercalate)
-import Data.Maybe (Maybe(..))
+import Data.Maybe (Maybe, maybe)
 import Data.String as String
 import Data.String.Regex as Regex
 import Data.String.Regex.Flags as RegexFlags
 import Data.Symbol (class IsSymbol, SProxy(..), reflectSymbol)
-import Global.Unsafe (unsafeEncodeURIComponent)
+import Data.Tuple (Tuple(..), fst, snd)
+import Foreign (F)
+import Global.Unsafe (unsafeDecodeURIComponent, unsafeEncodeURIComponent)
 import Prim.Row (class Cons, class Nub, class Union)
 import Prim.RowList (kind RowList, class RowToList, Cons, Nil)
 import Record as Record
+import Simple.JSON (readJSON', writeJSON)
 import Type.Data.RowList (RLProxy(..))
 import Type.Proxy (Proxy)
 import Unsafe.Coerce (unsafeCoerce)
 
-class EncodeParam param where
-  encodeParam :: param -> String
+class UrlParam a where
+  encodeUrlParam :: a -> String
+  decodeUrlParam :: String -> F a
 
-instance encodeParamInt :: EncodeParam Int where
-  encodeParam = show
+instance urlParamString :: UrlParam String where
+  encodeUrlParam = unsafeEncodeURIComponent
+  decodeUrlParam = unsafeDecodeURIComponent >>> pure
 
-instance encodeParamString :: EncodeParam String where
-  encodeParam = unsafeEncodeURIComponent
+instance urlParamInt :: UrlParam Int where
+  encodeUrlParam = encodeUrlParam <<< writeJSON
+  decodeUrlParam = decodeUrlParam >=> readJSON'
+
+instance urlParamNumber :: UrlParam Number where
+  encodeUrlParam = encodeUrlParam <<< writeJSON
+  decodeUrlParam = decodeUrlParam >=> readJSON'
 
 class WriteParams pathParams queryParams params | pathParams queryParams -> params where
   writeParams :: Proxy pathParams -> Proxy queryParams -> params -> String -> String
@@ -45,7 +55,10 @@ instance writeParamsRecord ::
 
     path = writePathParams (RLProxy :: _ pathParamList) (coercePathParams params) url
 
-    query = intercalate "&" $ buildQueryParams (RLProxy :: _ queryParamList) (coerceQueryParams params)
+    query =
+      buildQueryParams (RLProxy :: _ queryParamList) (coerceQueryParams params)
+        # map (\param -> fst param <> "=" <> snd param)
+        # intercalate "&"
 
     prefix q = if String.null q then "" else "?" <> q
 
@@ -57,7 +70,7 @@ instance writePathParamsNil :: WritePathParams () Nil where
 
 instance writePathParamsCons ::
   ( IsSymbol name
-  , EncodeParam value
+  , UrlParam value
   , Cons name value params' params
   , WritePathParams params' paramTail
   ) =>
@@ -70,17 +83,17 @@ instance writePathParamsCons ::
 
     replaced = either (const url) (\pattern -> Regex.replace pattern replacement url) regex
 
-    replacement = encodeParam $ Record.get (SProxy :: _ name) params
+    replacement = encodeUrlParam $ Record.get (SProxy :: _ name) params
 
 class BuildQueryParams (params :: #Type) (paramList :: RowList) | paramList -> params where
-  buildQueryParams :: RLProxy paramList -> Record params -> Array String
+  buildQueryParams :: RLProxy paramList -> Record params -> Array (Tuple String String)
 
 instance buildQueryParamsNil :: BuildQueryParams () Nil where
   buildQueryParams _ _ = []
 
 instance buildQueryParamsConsArray ::
   ( IsSymbol name
-  , EncodeParam value
+  , UrlParam value
   , Cons name (Array value) params' params
   , BuildQueryParams params' paramTail
   ) =>
@@ -91,12 +104,12 @@ instance buildQueryParamsConsArray ::
 
     name' = SProxy :: _ name
 
-    name = reflectSymbol name'
+    name = encodeUrlParam $ reflectSymbol name'
 
-    query = Record.get name' params <#> encodeQueryParam name
+    query = (Tuple name <<< encodeUrlParam) <$> Record.get name' params
 else instance buildQueryParamsCons ::
   ( IsSymbol name
-  , EncodeParam value
+  , UrlParam value
   , Cons name (Maybe value) params' params
   , BuildQueryParams params' paramTail
   ) =>
@@ -107,11 +120,6 @@ else instance buildQueryParamsCons ::
 
     name' = SProxy :: _ name
 
-    name = reflectSymbol name'
+    name = encodeUrlParam $ reflectSymbol name'
 
-    query = case Record.get name' params of
-      Nothing -> []
-      Just value -> [ encodeQueryParam name value ]
-
-encodeQueryParam :: forall name value. EncodeParam name => EncodeParam value => name -> value -> String
-encodeQueryParam name value = encodeParam name <> "=" <> encodeParam value
+    query = maybe [] (pure <<< Tuple name <<< encodeUrlParam) $ Record.get name' params
