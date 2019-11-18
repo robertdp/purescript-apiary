@@ -1,6 +1,6 @@
 module Apiary.Status where
 
-import Data.Symbol (SProxy)
+import Data.Symbol (SProxy(..))
 import Partial.Unsafe (unsafeCrashWith)
 import Prim.TypeError (class Fail, Beside, Text)
 
@@ -19,32 +19,52 @@ status code reason = Status { code, reason }
 ok :: Status
 ok = status 200 "OK"
 
+_ok = SProxy :: SProxy "ok"
+
 created :: Status
 created = status 201 "Created"
+
+_created = SProxy :: SProxy "created"
 
 noContent :: Status
 noContent = status 204 "No Content"
 
+_noContent = SProxy :: SProxy "noContent"
+
 notModified :: Status
 notModified = status 304 "Not Modified"
+
+_notModified = SProxy :: SProxy "notModified"
 
 badRequest :: Status
 badRequest = status 400 "Bad Request"
 
+_badRequest = SProxy :: SProxy "badRequest"
+
 unauthorized :: Status
 unauthorized = status 401 "Unauthorized"
+
+_unauthorized = SProxy :: SProxy "unauthorized"
 
 forbidden :: Status
 forbidden = status 403 "Forbidden"
 
+_forbidden = SProxy :: SProxy "forbidden"
+
 notFound :: Status
 notFound = status 404 "Not Found"
+
+_notFound = SProxy :: SProxy "notFound"
 
 conflict :: Status
 conflict = status 409 "Conflict"
 
+_conflict = SProxy :: SProxy "conflict"
+
 maintenanceInProgress :: Status
 maintenanceInProgress = status 520 "Maintenance In Progress"
+
+_maintenanceInProgress = SProxy :: SProxy "maintenanceInProgress"
 
 class ResponseStatus (status :: Symbol) where
   toStatus :: SProxy status -> Status

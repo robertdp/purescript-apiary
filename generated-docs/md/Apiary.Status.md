@@ -31,10 +31,22 @@ status :: Int -> String -> Status
 ok :: Status
 ```
 
+#### `_ok`
+
+``` purescript
+_ok :: SProxy "ok"
+```
+
 #### `created`
 
 ``` purescript
 created :: Status
+```
+
+#### `_created`
+
+``` purescript
+_created :: SProxy "created"
 ```
 
 #### `noContent`
@@ -43,10 +55,22 @@ created :: Status
 noContent :: Status
 ```
 
+#### `_noContent`
+
+``` purescript
+_noContent :: SProxy "noContent"
+```
+
 #### `notModified`
 
 ``` purescript
 notModified :: Status
+```
+
+#### `_notModified`
+
+``` purescript
+_notModified :: SProxy "notModified"
 ```
 
 #### `badRequest`
@@ -55,10 +79,22 @@ notModified :: Status
 badRequest :: Status
 ```
 
+#### `_badRequest`
+
+``` purescript
+_badRequest :: SProxy "badRequest"
+```
+
 #### `unauthorized`
 
 ``` purescript
 unauthorized :: Status
+```
+
+#### `_unauthorized`
+
+``` purescript
+_unauthorized :: SProxy "unauthorized"
 ```
 
 #### `forbidden`
@@ -67,10 +103,22 @@ unauthorized :: Status
 forbidden :: Status
 ```
 
+#### `_forbidden`
+
+``` purescript
+_forbidden :: SProxy "forbidden"
+```
+
 #### `notFound`
 
 ``` purescript
 notFound :: Status
+```
+
+#### `_notFound`
+
+``` purescript
+_notFound :: SProxy "notFound"
 ```
 
 #### `conflict`
@@ -79,10 +127,22 @@ notFound :: Status
 conflict :: Status
 ```
 
+#### `_conflict`
+
+``` purescript
+_conflict :: SProxy "conflict"
+```
+
 #### `maintenanceInProgress`
 
 ``` purescript
 maintenanceInProgress :: Status
+```
+
+#### `_maintenanceInProgress`
+
+``` purescript
+_maintenanceInProgress :: SProxy "maintenanceInProgress"
 ```
 
 #### `ResponseStatus`
