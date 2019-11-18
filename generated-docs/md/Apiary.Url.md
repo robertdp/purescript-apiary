@@ -1,16 +1,18 @@
-## Module Apiary.Params
+## Module Apiary.Url
 
-#### `EncodeParam`
+#### `UrlParam`
 
 ``` purescript
-class EncodeParam param  where
-  encodeParam :: param -> String
+class UrlParam a  where
+  encodeUrlParam :: a -> String
+  decodeUrlParam :: String -> F a
 ```
 
 ##### Instances
 ``` purescript
-EncodeParam Int
-EncodeParam String
+UrlParam String
+UrlParam Int
+UrlParam Number
 ```
 
 #### `WriteParams`
@@ -35,27 +37,21 @@ class WritePathParams (params :: # Type) (paramList :: RowList) | paramList -> p
 ##### Instances
 ``` purescript
 WritePathParams () Nil
-(IsSymbol name, EncodeParam value, Cons name value params' params, WritePathParams params' paramTail) => WritePathParams params (Cons name value paramTail)
+(IsSymbol name, UrlParam value, Cons name value params' params, WritePathParams params' paramTail) => WritePathParams params (Cons name value paramTail)
 ```
 
 #### `BuildQueryParams`
 
 ``` purescript
 class BuildQueryParams (params :: # Type) (paramList :: RowList) | paramList -> params where
-  buildQueryParams :: RLProxy paramList -> Record params -> Array String
+  buildQueryParams :: RLProxy paramList -> Record params -> Array (Tuple String String)
 ```
 
 ##### Instances
 ``` purescript
 BuildQueryParams () Nil
-(IsSymbol name, EncodeParam value, Cons name (Array value) params' params, BuildQueryParams params' paramTail) => BuildQueryParams params (Cons name (Array value) paramTail)
-(IsSymbol name, EncodeParam value, Cons name (Maybe value) params' params, BuildQueryParams params' paramTail) => BuildQueryParams params (Cons name value paramTail)
-```
-
-#### `encodeQueryParam`
-
-``` purescript
-encodeQueryParam :: forall name value. EncodeParam name => EncodeParam value => name -> value -> String
+(IsSymbol name, UrlParam value, Cons name (Array value) params' params, BuildQueryParams params' paramTail) => BuildQueryParams params (Cons name (Array value) paramTail)
+(IsSymbol name, UrlParam value, Cons name (Maybe value) params' params, BuildQueryParams params' paramTail) => BuildQueryParams params (Cons name value paramTail)
 ```
 
 
