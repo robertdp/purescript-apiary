@@ -1,7 +1,6 @@
 module Apiary.Server.Url where
 
 import Prelude
-
 import Apiary.Url (class UrlParam, decodeUrlParam, encodeUrlParam)
 import Control.Alt ((<|>))
 import Control.Monad.Error.Class (throwError)
