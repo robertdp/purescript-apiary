@@ -9,7 +9,7 @@ class WriteParams pathParams queryParams params | pathParams queryParams -> para
 
 ##### Instances
 ``` purescript
-(Union pathParams queryParamRep mergedParams, Nub mergedParams cleanParams, RowToList pathParams pathParamList, RowToList queryParams queryParamList, WritePathParams pathParams pathParamList, BuildQueryParams queryParamRep queryParamList) => WriteParams (Record pathParams) (Record queryParams) (Record cleanParams)
+(Union pathParams queryParamRep dirtyParams, Nub dirtyParams mergedParams, RowToList pathParams pathParamList, RowToList queryParams queryParamList, WritePathParams pathParams pathParamList, BuildQueryParams queryParamRep queryParamList) => WriteParams (Record pathParams) (Record queryParams) (Record mergedParams)
 ```
 
 #### `WritePathParams`

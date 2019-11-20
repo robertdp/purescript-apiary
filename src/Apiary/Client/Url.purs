@@ -22,19 +22,19 @@ class WriteParams pathParams queryParams params | pathParams queryParams -> para
   writeParams :: Proxy pathParams -> Proxy queryParams -> params -> String -> String
 
 instance writeParamsRecord ::
-  ( Union pathParams queryParamRep mergedParams
-  , Nub mergedParams cleanParams
+  ( Union pathParams queryParamRep dirtyParams
+  , Nub dirtyParams mergedParams
   , RowToList pathParams pathParamList
   , RowToList queryParams queryParamList
   , WritePathParams pathParams pathParamList
   , BuildQueryParams queryParamRep queryParamList
   ) =>
-  WriteParams (Record pathParams) (Record queryParams) (Record cleanParams) where
+  WriteParams (Record pathParams) (Record queryParams) (Record mergedParams) where
   writeParams _ _ params url = path <> prefix query
     where
-    coercePathParams = unsafeCoerce :: Record cleanParams -> Record pathParams
+    coercePathParams = unsafeCoerce :: Record mergedParams -> Record pathParams
 
-    coerceQueryParams = unsafeCoerce :: Record cleanParams -> Record queryParamRep
+    coerceQueryParams = unsafeCoerce :: Record mergedParams -> Record queryParamRep
 
     path = writePathParams (RLProxy :: _ pathParamList) (coercePathParams params) url
 

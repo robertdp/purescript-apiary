@@ -1,7 +1,6 @@
 module Apiary.Client.Request where
 
 import Prelude
-
 import Apiary.Client.Response (class DecodeResponse)
 import Apiary.Client.Url (class WriteParams, writeParams)
 import Apiary.Media (class MediaCodec, encodeMedia, mediaType)
@@ -15,7 +14,6 @@ import Unsafe.Coerce (unsafeCoerce)
 
 class BuildRequest route params body rep | route -> params body rep where
   buildRequest :: route -> params -> body -> Request
-
 
 instance buildRequestRouteGET ::
   ( PrepareSpec
