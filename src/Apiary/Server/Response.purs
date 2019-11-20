@@ -2,9 +2,10 @@ module Apiary.Server.Response where
 
 import Prelude
 import Apiary.Media (class MediaCodec, encodeMedia, mediaType)
+import Apiary.Route (class PrepareSpec, Route(..))
+import Apiary.Server.Handler (Handler(..))
 import Apiary.Status (class ResponseStatus, Status(..), toStatus)
 import Control.Monad.Indexed.Qualified as Ix
-import Apiary.Server.Handler (Handler(..))
 import Data.Foldable (class Foldable, traverse_)
 import Data.MediaType (MediaType)
 import Data.Newtype (unwrap)
@@ -93,15 +94,22 @@ respondWithMedia status rep response = Ix.do
   closeHeaders
   send (encodeMedia rep response)
 
-class BuildResponder rep a | rep -> a where
-  buildResponder :: Proxy rep -> a
+class BuildResponder route responder | route -> responder where
+  buildResponder :: route -> responder
 
 instance buildResponders ::
-  ( RowToList responses responseList
+  ( PrepareSpec
+      spec
+      { params :: params
+      , query :: query
+      , body :: body
+      , response :: Record responses
+      }
+  , RowToList responses responseList
   , MonadEffect m
   , BuildResponderRecord responseList m responders
   ) =>
-  BuildResponder { | responses } { | responders } where
+  BuildResponder (Route method path spec) { | responders } where
   buildResponder _ = Builder.build (buildResponderRecord (RLProxy :: _ responseList) (Proxy2 :: _ m)) {}
 
 class BuildResponderRecord (responses :: RowList) (m :: Type -> Type) (responders :: #Type) | responses m -> responders where

@@ -24,12 +24,6 @@ class ReadParams pathParams queryParams params | pathParams queryParams -> param
 (Union pathParams queryParams mergedParams, RowToList pathParams pathParamList, ReadPathParams pathParams pathParamList, RowToList queryParamsRep queryParamList, DecodeQueryParams queryParams queryParamList) => ReadParams (Record pathParams) (Record queryParamsRep) (Record mergedParams)
 ```
 
-#### `coerceQuery`
-
-``` purescript
-coerceQuery :: Query -> QueryParams
-```
-
 #### `ReadPathParams`
 
 ``` purescript

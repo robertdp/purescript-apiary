@@ -87,13 +87,13 @@ respondWithMedia :: forall m rep a. MediaCodec rep a => MonadEffect m => Status 
 #### `BuildResponder`
 
 ``` purescript
-class BuildResponder rep a | rep -> a where
-  buildResponder :: Proxy rep -> a
+class BuildResponder route responder | route -> responder where
+  buildResponder :: route -> responder
 ```
 
 ##### Instances
 ``` purescript
-(RowToList responses responseList, MonadEffect m, BuildResponderRecord responseList m responders) => BuildResponder (Record responses) (Record responders)
+(PrepareSpec spec { body :: body, params :: params, query :: query, response :: Record responses }, RowToList responses responseList, MonadEffect m, BuildResponderRecord responseList m responders) => BuildResponder (Route method path spec) (Record responders)
 ```
 
 #### `BuildResponderRecord`

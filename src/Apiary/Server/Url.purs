@@ -1,6 +1,7 @@
 module Apiary.Server.Url where
 
 import Prelude
+
 import Apiary.Url (class UrlParam, decodeUrlParam, encodeUrlParam)
 import Control.Alt ((<|>))
 import Control.Monad.Error.Class (throwError)
@@ -11,7 +12,6 @@ import Data.Traversable (sequence)
 import Foreign (F, Foreign, ForeignError(..))
 import Foreign.Object (Object)
 import Foreign.Object as Object
-import Node.URL as URL
 import Prim.Row (class Cons, class Lacks, class Union)
 import Prim.RowList (kind RowList, class RowToList, Cons, Nil)
 import Record as Record
@@ -20,7 +20,6 @@ import Record.Builder as Builder
 import Simple.JSON (read')
 import Type.Data.RowList (RLProxy(..))
 import Type.Proxy (Proxy)
-import Unsafe.Coerce (unsafeCoerce)
 
 type PathParams
   = Object String
@@ -48,8 +47,6 @@ instance readParamsRecord ::
       query = Builder.build queryBuilder {}
     pure $ Record.union path query
 
-coerceQuery :: URL.Query -> QueryParams
-coerceQuery = unsafeCoerce
 
 class ReadPathParams (params :: #Type) (paramList :: RowList) | paramList -> params where
   readPathParams :: RLProxy paramList -> PathParams -> F (Builder {} (Record params))

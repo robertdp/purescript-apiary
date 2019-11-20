@@ -5,6 +5,8 @@ import Apiary.Media (class MediaCodec, decodeMedia)
 import Apiary.Route (class PrepareSpec, Route)
 import Apiary.Server.Url (class ReadParams, PathParams, QueryParams, readParams)
 import Data.Either (Either(..), either)
+import Data.Maybe (maybe)
+import Data.Nullable as Nullable
 import Effect.Aff (Aff, launchAff_, throwError)
 import Effect.Aff.AVar as AVar
 import Effect.Class (liftEffect)
@@ -17,7 +19,9 @@ import Node.Buffer as Buffer
 import Node.Encoding as Encoding
 import Node.HTTP as HTTP
 import Node.Stream as Stream
+import Node.URL as URL
 import Type.Proxy (Proxy(..))
+import Unsafe.Coerce (unsafeCoerce)
 
 type Request params body
   = { params :: params
@@ -51,9 +55,7 @@ readBodyAsBuffer request = do
     stream = HTTP.requestAsStream request
   bodyResult <- AVar.empty
   chunks <- AVar.new []
-  fillResult <-
-    liftEffect
-      $ catchException (pure <<< Left) (Right <$> fillBody stream chunks bodyResult)
+  fillResult <- liftEffect do catchException (pure <<< Left) (Right <$> fillBody stream chunks bodyResult)
   body <- AVar.take bodyResult
   either throwError pure (fillResult *> body)
   where
@@ -77,3 +79,12 @@ readBodyAsBuffer request = do
 
 readBodyAsString :: HTTP.Request -> Aff String
 readBodyAsString = readBodyAsBuffer >=> liftEffect <<< Buffer.toString Encoding.UTF8
+
+requestQuery :: HTTP.Request -> QueryParams
+requestQuery =
+  maybe Object.empty (coerceQuery <<< URL.parseQueryString)
+    <<< (Nullable.toMaybe <<< _.query <<< URL.parse)
+    <<< HTTP.requestURL
+
+coerceQuery :: URL.Query -> QueryParams
+coerceQuery = unsafeCoerce

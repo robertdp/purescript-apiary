@@ -1,11 +1,12 @@
 module Apiary.Server.Router where
 
 import Prelude
+import Apiary.Route (Route(..))
+import Apiary.Server.Url (PathParams)
+import Data.Symbol (class IsSymbol, SProxy(..), reflectSymbol)
 import Effect (Effect)
 import Effect.Class (class MonadEffect, liftEffect)
 import Effect.Uncurried (EffectFn1, EffectFn2, EffectFn3, EffectFn4, mkEffectFn2, mkEffectFn3, runEffectFn1, runEffectFn3, runEffectFn4)
-import Foreign.Object (Object)
-import Node.HTTP (Request, Response, Server)
 import Node.HTTP as HTTP
 
 newtype Router a
@@ -34,22 +35,22 @@ instance monadEffectRouter :: MonadEffect Router where
 
 foreign import data RouterInstance :: Type
 
-foreign import _create :: EffectFn1 (EffectFn2 Request Response Unit) RouterInstance
+foreign import _create :: EffectFn1 (EffectFn2 HTTP.Request HTTP.Response Unit) RouterInstance
 
-create :: (Request -> Response -> Effect Unit) -> Effect RouterInstance
+create :: (HTTP.Request -> HTTP.Response -> Effect Unit) -> Effect RouterInstance
 create fallback = runEffectFn1 _create (mkEffectFn2 fallback)
 
-foreign import _lookup :: EffectFn3 RouterInstance Request Response Unit
+foreign import _lookup :: EffectFn3 RouterInstance HTTP.Request HTTP.Response Unit
 
-lookup :: Request -> Response -> RouterInstance -> Effect Unit
+lookup :: HTTP.Request -> HTTP.Response -> RouterInstance -> Effect Unit
 lookup req res router = runEffectFn3 _lookup router req res
 
 createServer ::
   forall m.
   MonadEffect m =>
-  (Request -> Response -> Effect Unit) ->
+  (HTTP.Request -> HTTP.Response -> Effect Unit) ->
   Router Unit ->
-  m Server
+  m HTTP.Server
 createServer fallback (Router runRouter) =
   liftEffect do
     router <- create fallback
@@ -57,17 +58,34 @@ createServer fallback (Router runRouter) =
     HTTP.createServer \req res -> do
       lookup req res router
 
-foreign import _on :: EffectFn4 RouterInstance String String (EffectFn3 Request Response PathParams Unit) Unit
+foreign import _on ::
+  EffectFn4 RouterInstance String String
+    (EffectFn3 HTTP.Request HTTP.Response PathParams Unit)
+    Unit
 
-type Method = String
+type Method
+  = String
 
-type Path = String
-
-type PathParams = Object String
+type Path
+  = String
 
 on ::
   Method ->
   Path ->
-  (Request -> Response -> PathParams -> Effect Unit) ->
+  (HTTP.Request -> HTTP.Response -> PathParams -> Effect Unit) ->
   Router Unit
 on method path handler = Router \router -> runEffectFn4 _on router method path (mkEffectFn3 handler)
+
+class AttachToRouter route where
+  attachToRouter :: route -> (HTTP.Request -> HTTP.Response -> PathParams -> Effect Unit) -> Router Unit
+
+instance attachToRouterRoute ::
+  ( IsSymbol method
+  , IsSymbol path
+  ) =>
+  AttachToRouter (Route method path spec) where
+  attachToRouter _ = on method path
+    where
+    method = reflectSymbol (SProxy :: _ method)
+
+    path = reflectSymbol (SProxy :: _ path)

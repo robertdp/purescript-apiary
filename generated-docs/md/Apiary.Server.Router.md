@@ -71,16 +71,22 @@ type Method = String
 type Path = String
 ```
 
-#### `PathParams`
-
-``` purescript
-type PathParams = Object String
-```
-
 #### `on`
 
 ``` purescript
 on :: Method -> Path -> (Request -> Response -> PathParams -> Effect Unit) -> Router Unit
+```
+
+#### `AttachToRouter`
+
+``` purescript
+class AttachToRouter route  where
+  attachToRouter :: route -> (Request -> Response -> PathParams -> Effect Unit) -> Router Unit
+```
+
+##### Instances
+``` purescript
+(IsSymbol method, IsSymbol path) => AttachToRouter (Route method path spec)
 ```
 
 
