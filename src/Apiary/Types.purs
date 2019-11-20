@@ -1,7 +1,6 @@
 module Apiary.Types where
 
 import Prelude
-
 import Control.Monad.Except (Except)
 import Data.Newtype (class Newtype)
 import Effect.Exception as Exception

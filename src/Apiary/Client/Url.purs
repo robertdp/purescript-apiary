@@ -1,7 +1,6 @@
 module Apiary.Client.Url where
 
 import Prelude
-
 import Apiary.Url (class UrlParam, encodeUrlParam)
 import Data.Either (either)
 import Data.Foldable (intercalate)

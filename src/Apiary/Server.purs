@@ -26,19 +26,19 @@ makeHandler ::
   ReaderT (m Unit -> Aff Unit) Router Unit
 makeHandler route handler = do
   launch <- ask
-  lift
-    $ attachToRouter route \httpRequest httpResponse pathParams ->
-        launchAff_ do
-          requestBody <- readBodyAsString httpRequest
-          let
-            queryParams = requestQuery httpRequest
+  lift do
+    attachToRouter route \httpRequest httpResponse pathParams ->
+      launchAff_ do
+        requestBody <- readBodyAsString httpRequest
+        let
+          queryParams = requestQuery httpRequest
 
-            responder = buildResponder route
-          decodeRequest route pathParams queryParams requestBody
-            # runExcept
-            # case _ of
-                Right request -> launch $ runHandler (handler request responder) httpResponse
-                Left errs -> runHandler (sendMultipleErrors errs) httpResponse
+          responder = buildResponder route
+        decodeRequest route pathParams queryParams requestBody
+          # runExcept
+          # case _ of
+              Right request -> launch $ runHandler (handler request responder) httpResponse
+              Left errs -> runHandler (sendMultipleErrors errs) httpResponse
 
 sendMultipleErrors :: forall m. MonadEffect m => MultipleErrors -> FullHandler m
 sendMultipleErrors errs =

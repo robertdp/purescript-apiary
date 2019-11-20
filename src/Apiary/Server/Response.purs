@@ -2,7 +2,7 @@ module Apiary.Server.Response where
 
 import Prelude
 import Apiary.Media (class MediaCodec, encodeMedia, mediaType)
-import Apiary.Route (class PrepareSpec, Route(..))
+import Apiary.Route (class PrepareSpec, Route)
 import Apiary.Server.Handler (Handler(..))
 import Apiary.Status (class ResponseStatus, Status(..), toStatus)
 import Control.Monad.Indexed.Qualified as Ix

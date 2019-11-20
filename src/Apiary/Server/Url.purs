@@ -1,7 +1,6 @@
 module Apiary.Server.Url where
 
 import Prelude
-
 import Apiary.Url (class UrlParam, decodeUrlParam, encodeUrlParam)
 import Control.Alt ((<|>))
 import Control.Monad.Error.Class (throwError)
@@ -46,7 +45,6 @@ instance readParamsRecord ::
 
       query = Builder.build queryBuilder {}
     pure $ Record.union path query
-
 
 class ReadPathParams (params :: #Type) (paramList :: RowList) | paramList -> params where
   readPathParams :: RLProxy paramList -> PathParams -> F (Builder {} (Record params))

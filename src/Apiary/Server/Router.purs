@@ -1,7 +1,7 @@
 module Apiary.Server.Router where
 
 import Prelude
-import Apiary.Route (Route(..))
+import Apiary.Route (Route)
 import Apiary.Server.Url (PathParams)
 import Data.Symbol (class IsSymbol, SProxy(..), reflectSymbol)
 import Effect (Effect)
