@@ -16,16 +16,4 @@ MediaCodec String String
 (WriteForeign a, ReadForeign a) => MediaCodec (JSON a) a
 ```
 
-#### `JSON`
-
-``` purescript
-newtype JSON a
-  = JSON a
-```
-
-##### Instances
-``` purescript
-(WriteForeign a, ReadForeign a) => MediaCodec (JSON a) a
-```
-
 

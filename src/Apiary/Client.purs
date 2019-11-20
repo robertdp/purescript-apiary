@@ -1,21 +1,20 @@
-module Apiary
+module Apiary.Client
   ( makeRequest
-  , module Apiary.Route
+  , fetch
   , module Apiary.Types
   ) where
 
 import Prelude
-import Apiary.Request (class BuildRequest, buildRequest)
-import Apiary.Response (class DecodeResponse, decodeResponse)
-import Apiary.Route (DELETE, GET, PATCH, POST, PUT, Route(..))
-import Apiary.Types (Error(..), Request, Response)
+import Apiary.Client.Request (class BuildRequest, buildRequest)
+import Apiary.Client.Response (class DecodeResponse, decodeResponse)
+import Apiary.Types (Apiary, Error(..), JSON(..), Request, Response, emptyRequest)
 import Control.Comonad (extract)
 import Control.Monad.Error.Class (try)
 import Control.Monad.Except (ExceptT(..), mapExceptT, runExceptT, withExceptT)
 import Data.Either (Either)
 import Effect.Aff (Aff)
 import Milkis (fetch, headers, statusCode, text) as Milkis
-import Milkis.Impl.Window (windowFetch) as Milkis
+import Milkis.Impl.Window (windowFetch)
 import Type.Proxy (Proxy(..))
 
 makeRequest ::
@@ -42,13 +41,11 @@ fetch :: Request -> ExceptT Error Aff Response
 fetch request@{ method, url, headers } = do
   response <-
     lift case request.body of
-      "" -> fetch' url { method, headers }
-      body -> fetch' url { method, headers, body }
+      "" -> Milkis.fetch windowFetch url { method, headers }
+      body -> Milkis.fetch windowFetch url { method, headers, body }
   text <- lift $ Milkis.text response
   pure
     { status: Milkis.statusCode response
     , headers: Milkis.headers response
     , body: text
     }
-  where
-  fetch' = Milkis.fetch Milkis.windowFetch

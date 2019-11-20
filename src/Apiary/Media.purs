@@ -1,6 +1,8 @@
 module Apiary.Media where
 
 import Prelude
+
+import Apiary.Types (JSON)
 import Data.Maybe (Maybe(..))
 import Data.MediaType (MediaType)
 import Data.MediaType.Common (applicationJSON)
@@ -12,9 +14,6 @@ class MediaCodec rep a | rep -> a where
   mediaType :: Proxy rep -> Maybe MediaType
   encodeMedia :: Proxy rep -> a -> String
   decodeMedia :: Proxy rep -> String -> F a
-
-newtype JSON a
-  = JSON a
 
 instance mediaCodecUnit :: MediaCodec Unit Unit where
   mediaType _ = Nothing

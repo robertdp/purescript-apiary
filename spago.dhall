@@ -5,7 +5,7 @@ You can edit this file as you like.
 { name =
     "my-project"
 , dependencies =
-    [ "media-types", "milkis", "simple-json" ]
+    [ "avar", "indexed-monad", "media-types", "milkis", "node-http", "simple-json" ]
 , packages =
     ./packages.dhall
 , sources =

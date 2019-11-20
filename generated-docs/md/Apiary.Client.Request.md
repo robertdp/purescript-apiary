@@ -1,19 +1,10 @@
-## Module Apiary
+## Module Apiary.Client.Request
 
-#### `makeRequest`
-
-``` purescript
-makeRequest :: forall route params body rep response. BuildRequest route params body rep => DecodeResponse rep response => route -> (Request -> Request) -> params -> body -> Aff (Either Error response)
-```
-
-
-### Re-exported from Apiary.Route:
-
-#### `Route`
+#### `BuildRequest`
 
 ``` purescript
-data Route (method :: Symbol) (path :: Symbol) spec
-  = Route
+class BuildRequest route params body rep | route -> params body rep where
+  buildRequest :: route -> params -> body -> Request
 ```
 
 ##### Instances
@@ -25,62 +16,10 @@ data Route (method :: Symbol) (path :: Symbol) spec
 (PrepareSpec spec { body :: body, params :: params, query :: query, response :: response }, WriteParams params query fullParams, MediaCodec body body', DecodeResponse response response', IsSymbol path) => BuildRequest (Route "DELETE" path spec) fullParams body' response
 ```
 
-#### `PUT`
+#### `buildRequest_`
 
 ``` purescript
-type PUT = Route "PUT"
+buildRequest_ :: forall path pathParams queryParams params bodyRep body. IsSymbol path => WriteParams pathParams queryParams params => MediaCodec bodyRep body => String -> SProxy path -> Proxy pathParams -> Proxy queryParams -> Proxy bodyRep -> params -> body -> Request
 ```
 
-#### `POST`
-
-``` purescript
-type POST = Route "POST"
-```
-
-#### `PATCH`
-
-``` purescript
-type PATCH = Route "PATCH"
-```
-
-#### `GET`
-
-``` purescript
-type GET = Route "GET"
-```
-
-#### `DELETE`
-
-``` purescript
-type DELETE = Route "DELETE"
-```
-
-### Re-exported from Apiary.Types:
-
-#### `Response`
-
-``` purescript
-type Response = { body :: String, headers :: Headers, status :: Int }
-```
-
-#### `Request`
-
-``` purescript
-type Request = { body :: String, headers :: Headers, method :: Method, url :: URL }
-```
-
-#### `Error`
-
-``` purescript
-data Error
-  = RuntimeError Error
-  | DecodeError MultipleErrors Response
-  | UnexpectedResponse Response
-```
-
-##### Instances
-``` purescript
-Show Error
-Semigroup Error
-```
 
