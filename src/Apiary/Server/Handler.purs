@@ -1,11 +1,17 @@
-module Apiary.Server.Handler where
+module Apiary.Server.Handler
+  ( Handler(..)
+  , runHandler
+  , module Ix
+  ) where
 
 import Prelude
 import Control.Applicative.Indexed (class IxApplicative, iapply, imap, ipure)
 import Control.Apply.Indexed (class IxApply)
 import Control.Bind.Indexed (class IxBind, ibind)
 import Control.Monad.Indexed (class IxMonad)
+import Control.Monad.Indexed.Qualified (apply, bind, discard, map, pure) as Ix
 import Control.Monad.Indexed.Trans (class IxMonadTrans)
+import Control.Monad.Indexed.Trans.Qualified (lift) as Ix
 import Data.Functor.Indexed (class IxFunctor)
 import Node.HTTP (Response)
 
