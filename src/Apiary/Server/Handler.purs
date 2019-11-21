@@ -69,4 +69,4 @@ instance monadThrowHandler :: MonadThrow e m => MonadThrow e (Handler m x x) whe
   throwError err = Handler \_ -> throwError err
 
 instance monadErrorHandler :: MonadError e m => MonadError e (Handler m x x) where
-  catchError ma f = Handler \res -> catchError (runHandler ma res) (f >>> case _ of mb -> runHandler mb res)
+  catchError ma f = Handler \res -> catchError (runHandler ma res) (\err -> case f err of mb -> runHandler mb res)
