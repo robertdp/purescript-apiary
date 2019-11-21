@@ -8,11 +8,14 @@ import Prelude
 import Control.Applicative.Indexed (class IxApplicative, iapply, imap, ipure)
 import Control.Apply.Indexed (class IxApply)
 import Control.Bind.Indexed (class IxBind, ibind)
+import Control.Monad.Error.Class (class MonadError, class MonadThrow, catchError, throwError)
 import Control.Monad.Indexed (class IxMonad)
 import Control.Monad.Indexed.Qualified (apply, bind, discard, map, pure) as Ix
 import Control.Monad.Indexed.Trans (class IxMonadTrans)
 import Control.Monad.Indexed.Trans.Qualified (lift) as Ix
 import Data.Functor.Indexed (class IxFunctor)
+import Effect.Aff.Class (class MonadAff, liftAff)
+import Effect.Class (class MonadEffect, liftEffect)
 import Node.HTTP (Response)
 
 newtype Handler m from to a
@@ -55,3 +58,15 @@ instance bindHandler :: Monad m => Bind (Handler m x x) where
   bind = ibind
 
 instance monadHandler :: Monad m => Monad (Handler m x x)
+
+instance monadEffectHandler :: MonadEffect m => MonadEffect (Handler m x x) where
+  liftEffect ma = Handler \_ -> liftEffect ma
+
+instance monadAffHandler :: MonadAff m => MonadAff (Handler m x x) where
+  liftAff ma = Handler \_ -> liftAff ma
+
+instance monadThrowHandler :: MonadThrow e m => MonadThrow e (Handler m x x) where
+  throwError err = Handler \_ -> throwError err
+
+instance monadErrorHandler :: MonadError e m => MonadError e (Handler m x x) where
+  catchError ma f = Handler \res -> catchError (runHandler ma res) (f >>> case _ of mb -> runHandler mb res)

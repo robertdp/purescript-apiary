@@ -1,7 +1,6 @@
 module Apiary.Media where
 
 import Prelude
-
 import Apiary.Types (JSON)
 import Data.Maybe (Maybe(..))
 import Data.MediaType (MediaType)
