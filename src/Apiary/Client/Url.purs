@@ -61,7 +61,7 @@ instance writePathParamsCons ::
     where
     coerceParams = unsafeCoerce :: Record params -> Record params'
 
-    regex = Regex.regex ("\\b\\:" <> reflectSymbol (SProxy :: _ name) <> "\\b") RegexFlags.global
+    regex = Regex.regex ("\\:" <> reflectSymbol (SProxy :: _ name) <> "\\b") RegexFlags.global
 
     replaced = either (const url) (\pattern -> Regex.replace pattern replacement url) regex
 
