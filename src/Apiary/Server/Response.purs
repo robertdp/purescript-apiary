@@ -42,6 +42,7 @@ writeStatus (Status { code, reason }) =
     liftEffect do
       HTTP.setStatusCode res code
       HTTP.setStatusMessage res reason
+      HTTP.setHeader res "Access-Control-Allow-Origin" "*"
 
 writeHeader :: forall m. MonadEffect m => String -> String -> Handler m HeadersOpen HeadersOpen Unit
 writeHeader name value =
