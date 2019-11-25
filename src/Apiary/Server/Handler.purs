@@ -42,7 +42,7 @@ instance ixBindHandler :: Monad m => IxBind (Handler m) where
 
 instance ixMonadHandler :: Monad m => IxMonad (Handler m)
 
-instance ixMonadTransHandler :: Monad m => IxMonadTrans Handler where
+instance ixMonadTransHandler :: IxMonadTrans Handler where
   ilift ma = Handler \_ -> ma
 
 instance functorHandler :: Monad m => Functor (Handler m x x) where

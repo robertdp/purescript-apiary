@@ -1,7 +1,6 @@
 module Apiary.Server where
 
 import Prelude
-
 import Apiary.Server.Handler (runHandler)
 import Apiary.Server.Request (class DecodeRequest, Request, decodeRequest, readBodyAsString, requestQuery)
 import Apiary.Server.Response (class BuildResponder, FullHandler, buildResponder, respondWithMedia)
