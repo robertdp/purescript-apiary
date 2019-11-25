@@ -95,8 +95,8 @@ respondWithMedia status rep response = Ix.do
   closeHeaders
   send (encodeMedia rep response)
 
-class BuildResponder route responder | route -> responder where
-  buildResponder :: route -> responder
+class BuildResponder route m responder | route m -> responder where
+  buildResponder :: route -> Proxy2 m -> responder
 
 instance buildResponders ::
   ( PrepareSpec
@@ -107,11 +107,10 @@ instance buildResponders ::
       , response :: Record responses
       }
   , RowToList responses responseList
-  , MonadEffect m
   , BuildResponderRecord responseList m responders
   ) =>
-  BuildResponder (Route method path spec) { | responders } where
-  buildResponder _ = Builder.build (buildResponderRecord (RLProxy :: _ responseList) (Proxy2 :: _ m)) {}
+  BuildResponder (Route method path spec) m { | responders } where
+  buildResponder _ _ = Builder.build (buildResponderRecord (RLProxy :: _ responseList) (Proxy2 :: _ m)) {}
 
 class BuildResponderRecord (responses :: RowList) (m :: Type -> Type) (responders :: #Type) | responses m -> responders where
   buildResponderRecord :: RLProxy responses -> Proxy2 m -> Builder {} { | responders }
