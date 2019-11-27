@@ -1,46 +1,65 @@
 module Apiary.Server where
 
 import Prelude
-import Apiary.Server.Handler (runHandler)
-import Apiary.Server.Request (class DecodeRequest, Request, decodeRequest, readBodyAsString, requestQuery)
-import Apiary.Server.Response (class BuildResponder, FullHandler, buildResponder, respondWithMedia)
-import Apiary.Server.Router (class AttachToRouter, Router, attachToRouter)
+import Apiary.Server.Request (class DecodeRequest, Request, decodeRequest)
+import Apiary.Server.Request as Request
+import Apiary.Server.Response (FullResponse)
+import Apiary.Server.Response as Response
+import Apiary.Server.Response.Helper (class BuildResponder, buildResponder)
+import Apiary.Server.Router (class AttachToRouter, Router)
+import Apiary.Server.Router as Router
+import Apiary.Server.Url (PathParams)
 import Apiary.Status as Status
 import Apiary.Types (JSON)
-import Control.Monad.Except (lift, runExcept)
-import Control.Monad.Reader (ReaderT, ask)
-import Data.Array as Array
+import Control.Monad.Except (runExcept)
+import Data.Array.NonEmpty as Array
 import Data.Either (Either(..))
 import Effect.Aff (Aff, launchAff_)
+import Effect.Aff.Class (class MonadAff, liftAff)
 import Effect.Class (class MonadEffect)
 import Foreign (MultipleErrors, renderForeignError)
+import Node.HTTP as HTTP
 import Type.Proxy (Proxy(..), Proxy2(..))
+
+newtype Handler m route
+  = Handler
+  { route :: route
+  , handler :: HTTP.Request -> HTTP.Response -> PathParams -> m Unit
+  }
 
 makeHandler ::
   forall route params body responder m.
-  AttachToRouter route =>
+  MonadAff m =>
   DecodeRequest route params body =>
   BuildResponder route m responder =>
   route ->
-  (Request params body -> responder -> FullHandler m) ->
-  ReaderT (m Unit -> Aff Unit) Router Unit
-makeHandler route handler = do
-  launch <- ask
-  lift do
-    attachToRouter route \httpRequest httpResponse pathParams ->
-      launchAff_ do
-        requestBody <- readBodyAsString httpRequest
-        let
-          queryParams = requestQuery httpRequest
+  (Request params body -> responder -> FullResponse m) ->
+  Handler m route
+makeHandler route handler = Handler { route, handler: routerHandler }
+  where
+  routerHandler httpRequest httpResponse pathParams = do
+    requestBody <- liftAff $ Request.readBodyAsString httpRequest
+    let
+      queryParams = Request.requestQuery httpRequest
 
-          responder = buildResponder route (Proxy2 :: _ m)
-        decodeRequest route pathParams queryParams requestBody
-          # runExcept
-          # case _ of
-              Right request -> launch $ runHandler (handler request responder) httpResponse
-              Left errs -> runHandler (sendMultipleErrors errs) httpResponse
+      responder = buildResponder route (Proxy2 :: _ m)
+    decodeRequest route pathParams queryParams requestBody
+      # runExcept
+      # case _ of
+          Right request -> Response.runResponse (handler request responder) httpResponse
+          Left errs -> Response.runResponse (sendMultipleErrors errs) httpResponse
 
-sendMultipleErrors :: forall m. MonadEffect m => MultipleErrors -> FullHandler m
+sendMultipleErrors :: forall m. MonadEffect m => MultipleErrors -> FullResponse m
 sendMultipleErrors errs =
-  respondWithMedia Status.badRequest (Proxy :: _ (JSON _))
+  Response.respondWithMedia Status.badRequest (Proxy :: _ (JSON _))
     { errors: Array.fromFoldable $ map renderForeignError $ errs }
+
+attachToRouter ::
+  forall m route.
+  AttachToRouter route =>
+  (m ~> Aff) ->
+  Handler m route ->
+  Router Unit
+attachToRouter runHandler (Handler { route, handler }) =
+  Router.attachToRouter route \request response params ->
+    launchAff_ $ runHandler $ handler request response params
