@@ -43,10 +43,12 @@ makeHandler route handler = Handler { route, handler: routerHandler }
       queryParams = Request.requestQuery httpRequest
 
       responder = buildResponder route (Proxy2 :: _ m)
+
+      updateHeaders = _ { headers = HTTP.requestHeaders httpRequest }
     decodeRequest route pathParams queryParams requestBody
       # runExcept
       # case _ of
-          Right request -> Response.runResponse (handler request responder) httpResponse
+          Right request -> Response.runResponse (handler (updateHeaders request) responder) httpResponse
           Left errs -> Response.runResponse (sendMultipleErrors errs) httpResponse
 
 sendMultipleErrors :: forall m. MonadEffect m => MultipleErrors -> FullResponse m
