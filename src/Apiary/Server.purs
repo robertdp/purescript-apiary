@@ -59,7 +59,7 @@ sendMultipleErrors errs =
 attachToRouter ::
   forall m route.
   AttachToRouter route =>
-  (m ~> Aff) ->
+  (m Unit -> Aff Unit) ->
   Handler m route ->
   Router Unit
 attachToRouter runHandler (Handler { route, handler }) =
