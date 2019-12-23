@@ -79,10 +79,15 @@ makeSecureRequest ::
   m (Either Apiary.Error response)
 makeSecureRequest route params body = do
   env <- ask
-  liftAff $ Apiary.makeRequest route (addBaseUrl env.baseUrl <<< addToken env.token) params body
+  liftAff $ mkRequest (addBaseUrl env.baseUrl <<< addToken env.token)
   where
+
+  mkRequest modify =
+    Apiary.makeRequest route modify params body
+
   addToken token request@{ headers } =
     request { headers = Object.insert "Authorization" ("Bearer " <> token) headers }
+
   addBaseUrl baseUrl request@{ url: URL url } =
     request { url = URL (baseUrl <> url) }
 
@@ -92,5 +97,5 @@ listUsers ::
   { sortBy :: Maybe UserSort, sortDir :: Maybe SortDir } ->
   AppM (Either Apiary.Error (Variant ( ok :: Array User )))
 listUsers params =
-  makeSecureRequest (Route :: ListUsers) identity params unit
+  makeSecureRequest (Route :: ListUsers) params unit
 ```
