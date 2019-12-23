@@ -27,18 +27,6 @@ type Response = { body :: String, headers :: Headers, status :: Int }
 type Request = { body :: String, headers :: Headers, method :: Method, url :: URL }
 ```
 
-#### `JSON`
-
-``` purescript
-newtype JSON a
-  = JSON a
-```
-
-##### Instances
-``` purescript
-Newtype (JSON a) _
-```
-
 #### `Error`
 
 ``` purescript

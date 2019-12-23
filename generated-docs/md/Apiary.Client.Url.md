@@ -22,7 +22,7 @@ class WritePathParams (params :: # Type) (paramList :: RowList) | paramList -> p
 ##### Instances
 ``` purescript
 WritePathParams () Nil
-(IsSymbol name, UrlParam value, Cons name value params' params, WritePathParams params' paramTail) => WritePathParams params (Cons name value paramTail)
+(IsSymbol name, EncodeParam value, Cons name value params' params, WritePathParams params' paramTail) => WritePathParams params (Cons name value paramTail)
 ```
 
 #### `BuildQueryParams`
@@ -35,8 +35,8 @@ class BuildQueryParams (params :: # Type) (paramList :: RowList) | paramList -> 
 ##### Instances
 ``` purescript
 BuildQueryParams () Nil
-(IsSymbol name, UrlParam value, Cons name (Array value) params' params, BuildQueryParams params' paramTail) => BuildQueryParams params (Cons name (Array value) paramTail)
-(IsSymbol name, UrlParam value, Cons name (Maybe value) params' params, BuildQueryParams params' paramTail) => BuildQueryParams params (Cons name value paramTail)
+(IsSymbol name, EncodeParam value, Cons name (Array value) params' params, BuildQueryParams params' paramTail) => BuildQueryParams params (Cons name (Array value) paramTail)
+(IsSymbol name, EncodeParam value, Cons name (Maybe value) params' params, BuildQueryParams params' paramTail) => BuildQueryParams params (Cons name value paramTail)
 ```
 
 

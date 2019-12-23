@@ -39,16 +39,4 @@ Semigroup Error
 type Apiary = Except Error
 ```
 
-#### `JSON`
-
-``` purescript
-newtype JSON a
-  = JSON a
-```
-
-##### Instances
-``` purescript
-Newtype (JSON a) _
-```
-
 

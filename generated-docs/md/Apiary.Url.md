@@ -1,18 +1,33 @@
 ## Module Apiary.Url
 
-#### `UrlParam`
+#### `EncodeParam`
 
 ``` purescript
-class UrlParam a  where
-  encodeUrlParam :: a -> String
-  decodeUrlParam :: String -> F a
+class EncodeParam a  where
+  encodeParam :: a -> String
 ```
 
 ##### Instances
 ``` purescript
-UrlParam String
-UrlParam Int
-UrlParam Number
+EncodeParam String
+EncodeParam Boolean
+EncodeParam Int
+EncodeParam Number
+```
+
+#### `DecodeParam`
+
+``` purescript
+class DecodeParam a  where
+  decodeParam :: String -> F a
+```
+
+##### Instances
+``` purescript
+DecodeParam String
+DecodeParam Boolean
+DecodeParam Int
+DecodeParam Number
 ```
 
 
