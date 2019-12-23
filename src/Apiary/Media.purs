@@ -1,14 +1,12 @@
 module Apiary.Media where
 
 import Prelude
-
 import Data.Maybe (Maybe(..))
 import Data.MediaType (MediaType)
 import Data.MediaType.Common (applicationJSON, textPlain)
 import Foreign (F)
 import Simple.JSON (class ReadForeign, class WriteForeign, readJSON', writeJSON)
 import Type.Proxy (Proxy)
-
 
 class MediaType rep where
   mediaType :: Proxy rep -> Maybe MediaType

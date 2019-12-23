@@ -1,7 +1,6 @@
 module Apiary.Client.Response where
 
 import Prelude
-
 import Apiary.Media (class DecodeMedia, decodeMedia)
 import Apiary.Status (class ResponseStatus)
 import Apiary.Status as Status

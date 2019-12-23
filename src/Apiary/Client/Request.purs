@@ -1,7 +1,6 @@
 module Apiary.Client.Request where
 
 import Prelude
-
 import Apiary.Client.Response (class DecodeResponse)
 import Apiary.Client.Url (class WriteParams, writeParams)
 import Apiary.Media (class EncodeMedia, class MediaType, encodeMedia, mediaType)
