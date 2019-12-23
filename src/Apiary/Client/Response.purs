@@ -1,7 +1,8 @@
 module Apiary.Client.Response where
 
 import Prelude
-import Apiary.Media (class MediaCodec, decodeMedia)
+
+import Apiary.Media (class DecodeMedia, decodeMedia)
 import Apiary.Status (class ResponseStatus)
 import Apiary.Status as Status
 import Apiary.Types (Apiary, Error(..), Response)
@@ -44,7 +45,7 @@ instance decodeResponseVariantCons ::
   , Cons status decoded variant' variant
   , DecodeResponseVariant variant' responseList
   , Union variant' a variant
-  , MediaCodec rep decoded
+  , DecodeMedia rep decoded
   ) =>
   DecodeResponseVariant variant (Cons status rep responseList) where
   decodeResponseVariant _ response =

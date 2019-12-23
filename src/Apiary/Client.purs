@@ -7,7 +7,7 @@ module Apiary.Client
 import Prelude
 import Apiary.Client.Request (class BuildRequest, buildRequest)
 import Apiary.Client.Response (class DecodeResponse, decodeResponse)
-import Apiary.Types (Apiary, Error(..), JSON(..), Request, Response, emptyRequest)
+import Apiary.Types (Apiary, Error(..), Request, Response, emptyRequest)
 import Control.Comonad (extract)
 import Control.Monad.Error.Class (try)
 import Control.Monad.Except (ExceptT(..), mapExceptT, runExceptT, withExceptT)

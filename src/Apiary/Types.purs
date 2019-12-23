@@ -2,7 +2,6 @@ module Apiary.Types where
 
 import Prelude
 import Control.Monad.Except (Except)
-import Data.Newtype (class Newtype)
 import Effect.Exception as Exception
 import Foreign (MultipleErrors)
 import Milkis (Headers, Method, URL(..), getMethod)
@@ -47,8 +46,3 @@ instance semigroupError :: Semigroup Error where
 
 type Apiary
   = Except Error
-
-newtype JSON a
-  = JSON a
-
-derive instance newtypeJSON :: Newtype (JSON a) _

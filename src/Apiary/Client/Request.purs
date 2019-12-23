@@ -1,9 +1,10 @@
 module Apiary.Client.Request where
 
 import Prelude
+
 import Apiary.Client.Response (class DecodeResponse)
 import Apiary.Client.Url (class WriteParams, writeParams)
-import Apiary.Media (class MediaCodec, encodeMedia, mediaType)
+import Apiary.Media (class EncodeMedia, class MediaType, encodeMedia, mediaType)
 import Apiary.Route (class PrepareSpec, Route)
 import Apiary.Types (Request)
 import Data.Maybe (maybe)
@@ -38,7 +39,8 @@ else instance buildRequestRoutePATCH ::
       , response :: response
       }
   , WriteParams params query fullParams
-  , MediaCodec body body'
+  , MediaType body
+  , EncodeMedia body body'
   , DecodeResponse response response'
   , IsSymbol path
   ) =>
@@ -53,7 +55,8 @@ else instance buildRequestRoutePOST ::
       , response :: response
       }
   , WriteParams params query fullParams
-  , MediaCodec body body'
+  , MediaType body
+  , EncodeMedia body body'
   , DecodeResponse response response'
   , IsSymbol path
   ) =>
@@ -68,7 +71,8 @@ else instance buildRequestRoutePUT ::
       , response :: response
       }
   , WriteParams params query fullParams
-  , MediaCodec body body'
+  , MediaType body
+  , EncodeMedia body body'
   , DecodeResponse response response'
   , IsSymbol path
   ) =>
@@ -83,7 +87,8 @@ else instance buildRequestRouteDELETE ::
       , response :: response
       }
   , WriteParams params query fullParams
-  , MediaCodec body body'
+  , MediaType body
+  , EncodeMedia body body'
   , DecodeResponse response response'
   , IsSymbol path
   ) =>
@@ -94,7 +99,8 @@ buildRequest_ ::
   forall path pathParams queryParams params bodyRep body.
   IsSymbol path =>
   WriteParams pathParams queryParams params =>
-  MediaCodec bodyRep body =>
+  MediaType bodyRep =>
+  EncodeMedia bodyRep body =>
   String ->
   SProxy path ->
   Proxy pathParams ->
