@@ -5,7 +5,7 @@ import Apiary.Client.Response (class DecodeResponse)
 import Apiary.Client.Url (class WriteParams, writeParams)
 import Apiary.Media (class EncodeMedia, class MediaType, encodeMedia, mediaType)
 import Apiary.Route (class PrepareSpec, Route)
-import Apiary.Types (Request)
+import Apiary.Types (None, Request)
 import Data.Maybe (maybe)
 import Data.Symbol (class IsSymbol, SProxy(..), reflectSymbol)
 import Foreign.Object as Object
@@ -20,15 +20,15 @@ instance buildRequestRouteGET ::
       spec
       { params :: params
       , query :: query
-      , body :: Unit
+      , body :: None
       , response :: response
       }
   , WriteParams params query fullParams
   , DecodeResponse response response'
   , IsSymbol path
   ) =>
-  BuildRequest (Route "GET" path spec) fullParams Unit response where
-  buildRequest _ = buildRequest_ "GET" (SProxy :: _ path) (Proxy :: _ params) (Proxy :: _ query) (Proxy :: _ Unit)
+  BuildRequest (Route "GET" path spec) fullParams None response where
+  buildRequest _ = buildRequest_ "GET" (SProxy :: _ path) (Proxy :: _ params) (Proxy :: _ query) (Proxy :: _ None)
 else instance buildRequestRoutePATCH ::
   ( PrepareSpec
       spec

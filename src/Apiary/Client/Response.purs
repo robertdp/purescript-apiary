@@ -4,7 +4,7 @@ import Prelude
 import Apiary.Media (class DecodeMedia, decodeMedia)
 import Apiary.Status (class ResponseStatus)
 import Apiary.Status as Status
-import Apiary.Types (Apiary, Error(..), Response)
+import Apiary.Types (Apiary, Error(..), None(..), Response)
 import Control.Alt ((<|>))
 import Control.Monad.Error.Class (throwError)
 import Control.Monad.Except (withExcept)
@@ -18,8 +18,8 @@ import Type.Proxy (Proxy(..))
 class DecodeResponse rep response | rep -> response where
   decodeResponse :: Proxy rep -> Response -> Apiary response
 
-instance decodeResponseUnit :: DecodeResponse Unit Unit where
-  decodeResponse _ _ = pure unit
+instance decodeResponseNone :: DecodeResponse None None where
+  decodeResponse _ _ = pure None
 
 instance decodeResponseString :: DecodeResponse String String where
   decodeResponse _ response = pure response.body

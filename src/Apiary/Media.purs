@@ -1,6 +1,7 @@
 module Apiary.Media where
 
 import Prelude
+import Apiary.Types (None(..))
 import Data.Maybe (Maybe(..))
 import Data.MediaType (MediaType)
 import Data.MediaType.Common (applicationJSON, textPlain)
@@ -17,14 +18,14 @@ class EncodeMedia rep a | rep -> a where
 class DecodeMedia rep a | rep -> a where
   decodeMedia :: Proxy rep -> String -> F a
 
-instance mediaTypeUnit :: MediaType Unit where
+instance mediaTypeNone :: MediaType None where
   mediaType _ = Nothing
 
-instance encodeMediaUnit :: EncodeMedia Unit Unit where
+instance encodeMediaNone :: EncodeMedia None None where
   encodeMedia _ _ = ""
 
-instance decodeMediaUnit :: DecodeMedia Unit Unit where
-  decodeMedia _ _ = pure unit
+instance decodeMediaNone :: DecodeMedia None None where
+  decodeMedia _ _ = pure None
 
 instance mediaTypeString :: MediaType String where
   mediaType _ = Just textPlain

@@ -46,3 +46,9 @@ instance semigroupError :: Semigroup Error where
 
 type Apiary
   = Except Error
+
+data None
+  = None
+
+instance showNone :: Show None where
+  show _ = "None"

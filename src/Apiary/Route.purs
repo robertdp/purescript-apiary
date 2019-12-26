@@ -1,6 +1,6 @@
 module Apiary.Route where
 
-import Prelude
+import Apiary.Types (None)
 import Prim.Row (class Nub, class Union)
 
 data Route (method :: Symbol) (path :: Symbol) spec
@@ -9,8 +9,8 @@ data Route (method :: Symbol) (path :: Symbol) spec
 type SpecDefaults
   = ( params :: {}
     , query :: {}
-    , body :: Unit
-    , response :: Unit
+    , body :: None
+    , response :: None
     )
 
 class PrepareSpec spec prepared | spec -> prepared
