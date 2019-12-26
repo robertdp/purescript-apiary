@@ -26,6 +26,12 @@ none = unsafeCoerce unit
 instance showNone :: Show None where
   show _ = "none"
 
+instance semigroupNone :: Semigroup None where
+  append _ _ = none
+
+instance monoidNone :: Monoid None where
+  mempty = none
+
 instance mediaTypeNone :: MediaType None where
   mediaType _ = Nothing
 
