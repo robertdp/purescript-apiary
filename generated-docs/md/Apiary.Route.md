@@ -10,7 +10,7 @@ data Route (method :: Symbol) (path :: Symbol) spec
 #### `SpecDefaults`
 
 ``` purescript
-type SpecDefaults = (body :: Unit, params :: Record (), query :: Record (), response :: Unit)
+type SpecDefaults = (body :: None, params :: Record (), query :: Record (), response :: None)
 ```
 
 #### `PrepareSpec`

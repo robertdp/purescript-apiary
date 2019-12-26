@@ -9,7 +9,7 @@ class DecodeResponse rep response | rep -> response where
 
 ##### Instances
 ``` purescript
-DecodeResponse Unit Unit
+DecodeResponse None None
 DecodeResponse String String
 (RowToList responses responseList, DecodeResponseVariant result responseList) => DecodeResponse (Record responses) (Variant result)
 ```

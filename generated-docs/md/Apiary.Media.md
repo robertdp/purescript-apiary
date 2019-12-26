@@ -9,7 +9,7 @@ class MediaType rep  where
 
 ##### Instances
 ``` purescript
-MediaType Unit
+MediaType None
 MediaType String
 MediaType (JSON a)
 ```
@@ -23,7 +23,7 @@ class EncodeMedia rep a | rep -> a where
 
 ##### Instances
 ``` purescript
-EncodeMedia Unit Unit
+EncodeMedia None None
 EncodeMedia String String
 (WriteForeign a) => EncodeMedia (JSON a) a
 ```
@@ -37,9 +37,30 @@ class DecodeMedia rep a | rep -> a where
 
 ##### Instances
 ``` purescript
-DecodeMedia Unit Unit
+DecodeMedia None None
 DecodeMedia String String
 (ReadForeign a) => DecodeMedia (JSON a) a
+```
+
+#### `None`
+
+``` purescript
+data None :: Type
+```
+
+##### Instances
+``` purescript
+Semigroup None
+Monoid None
+MediaType None
+EncodeMedia None None
+DecodeMedia None None
+```
+
+#### `none`
+
+``` purescript
+none :: None
 ```
 
 #### `JSON`
