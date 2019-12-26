@@ -11,20 +11,6 @@ class DecodeResponse rep response | rep -> response where
 ``` purescript
 DecodeResponse None None
 DecodeResponse String String
-(RowToList responses responseList, DecodeResponseVariant result responseList) => DecodeResponse (Record responses) (Variant result)
-```
-
-#### `DecodeResponseVariant`
-
-``` purescript
-class DecodeResponseVariant (response :: # Type) (responseList :: RowList) | responseList -> response where
-  decodeResponseVariant :: RLProxy responseList -> Response -> Apiary (Variant response)
-```
-
-##### Instances
-``` purescript
-DecodeResponseVariant () Nil
-(IsSymbol status, ResponseStatus status, Cons status decoded variant' variant, DecodeResponseVariant variant' responseList, Union variant' a variant, DecodeMedia rep decoded) => DecodeResponseVariant variant (Cons status rep responseList)
 ```
 
 

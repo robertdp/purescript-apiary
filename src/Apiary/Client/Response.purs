@@ -1,4 +1,7 @@
-module Apiary.Client.Response where
+module Apiary.Client.Response
+  ( class DecodeResponse
+  , decodeResponse
+  ) where
 
 import Prelude
 import Apiary.Media (class DecodeMedia, None, decodeMedia, none)

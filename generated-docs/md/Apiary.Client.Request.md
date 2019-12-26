@@ -16,10 +16,4 @@ class BuildRequest route params body rep | route -> params body rep where
 (PrepareSpec spec { body :: body, params :: params, query :: query, response :: response }, WriteParams params query fullParams, MediaType body, EncodeMedia body body', DecodeResponse response response', IsSymbol path) => BuildRequest (Route "DELETE" path spec) fullParams body' response
 ```
 
-#### `buildRequest_`
-
-``` purescript
-buildRequest_ :: forall path pathParams queryParams params bodyRep body. IsSymbol path => WriteParams pathParams queryParams params => MediaType bodyRep => EncodeMedia bodyRep body => String -> SProxy path -> Proxy pathParams -> Proxy queryParams -> Proxy bodyRep -> params -> body -> Request
-```
-
 

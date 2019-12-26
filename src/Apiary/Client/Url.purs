@@ -1,4 +1,7 @@
-module Apiary.Client.Url where
+module Apiary.Client.Url
+  ( class WriteParams
+  , writeParams
+  ) where
 
 import Prelude
 import Apiary.Url as Url

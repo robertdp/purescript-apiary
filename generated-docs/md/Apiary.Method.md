@@ -17,10 +17,4 @@ RequestMethod "DELETE"
 (Fail (Beside (Text "Unsupported request method: ") (Text method))) => RequestMethod method
 ```
 
-#### `coerceMethod`
-
-``` purescript
-coerceMethod :: forall method. IsSymbol method => SProxy method -> Method
-```
-
 

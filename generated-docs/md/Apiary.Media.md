@@ -66,8 +66,8 @@ none :: None
 #### `JSON`
 
 ``` purescript
-newtype JSON a
-  = JSON a
+data JSON a
+  = JSON
 ```
 
 ##### Instances

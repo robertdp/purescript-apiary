@@ -47,8 +47,8 @@ instance encodeMediaString :: EncodeMedia String String where
 instance decodeMediaString :: DecodeMedia String String where
   decodeMedia _ a = pure a
 
-newtype JSON a
-  = JSON a
+data JSON a
+  = JSON
 
 instance mediaTypeJSON :: MediaType (JSON a) where
   mediaType _ = Just applicationJSON

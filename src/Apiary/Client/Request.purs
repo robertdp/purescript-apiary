@@ -1,4 +1,7 @@
-module Apiary.Client.Request where
+module Apiary.Client.Request
+  ( class BuildRequest
+  , buildRequest
+  ) where
 
 import Prelude
 import Apiary.Client.Response (class DecodeResponse)
