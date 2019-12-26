@@ -23,9 +23,6 @@ foreign import data None :: Type
 none :: None
 none = unsafeCoerce unit
 
-instance showNone :: Show None where
-  show _ = "none"
-
 instance semigroupNone :: Semigroup None where
   append _ _ = none
 
