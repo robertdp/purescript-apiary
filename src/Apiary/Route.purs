@@ -1,6 +1,6 @@
 module Apiary.Route where
 
-import Apiary.Types (None)
+import Apiary.Media (None)
 import Prim.Row (class Nub, class Union)
 
 data Route (method :: Symbol) (path :: Symbol) spec

@@ -3,9 +3,9 @@ module Apiary.Client.Request where
 import Prelude
 import Apiary.Client.Response (class DecodeResponse)
 import Apiary.Client.Url (class WriteParams, writeParams)
-import Apiary.Media (class EncodeMedia, class MediaType, encodeMedia, mediaType)
+import Apiary.Media (class EncodeMedia, class MediaType, None, encodeMedia, mediaType)
 import Apiary.Route (class PrepareSpec, Route)
-import Apiary.Types (None, Request)
+import Apiary.Types (Request)
 import Data.Maybe (maybe)
 import Data.Symbol (class IsSymbol, SProxy(..), reflectSymbol)
 import Foreign.Object as Object

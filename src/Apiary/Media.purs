@@ -1,13 +1,13 @@
 module Apiary.Media where
 
 import Prelude
-import Apiary.Types (None(..))
 import Data.Maybe (Maybe(..))
 import Data.MediaType (MediaType)
 import Data.MediaType.Common (applicationJSON, textPlain)
 import Foreign (F)
 import Simple.JSON (class ReadForeign, class WriteForeign, readJSON', writeJSON)
 import Type.Proxy (Proxy)
+import Unsafe.Coerce (unsafeCoerce)
 
 class MediaType rep where
   mediaType :: Proxy rep -> Maybe MediaType
@@ -18,6 +18,14 @@ class EncodeMedia rep a | rep -> a where
 class DecodeMedia rep a | rep -> a where
   decodeMedia :: Proxy rep -> String -> F a
 
+foreign import data None :: Type
+
+none :: None
+none = unsafeCoerce unit
+
+instance showNone :: Show None where
+  show _ = "none"
+
 instance mediaTypeNone :: MediaType None where
   mediaType _ = Nothing
 
@@ -25,7 +33,7 @@ instance encodeMediaNone :: EncodeMedia None None where
   encodeMedia _ _ = ""
 
 instance decodeMediaNone :: DecodeMedia None None where
-  decodeMedia _ _ = pure None
+  decodeMedia _ _ = pure none
 
 instance mediaTypeString :: MediaType String where
   mediaType _ = Just textPlain
