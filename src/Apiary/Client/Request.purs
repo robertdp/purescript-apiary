@@ -114,6 +114,6 @@ buildRequest_ ::
 buildRequest_ method path pathParams queryParams bodyRep params body =
   { method: unsafeCoerce method
   , url: unsafeCoerce (writeParams pathParams queryParams params (reflectSymbol path))
-  , headers: maybe Object.empty (Object.singleton "Content-Type" <<< show) (mediaType bodyRep)
+  , headers: maybe Object.empty (Object.singleton "Content-Type" <<< unwrap) (mediaType bodyRep)
   , body: encodeMedia bodyRep body
   }
