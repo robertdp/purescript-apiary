@@ -10,6 +10,7 @@ import Apiary.Media (class EncodeMedia, class MediaType, None, encodeMedia, medi
 import Apiary.Route (class PrepareSpec, Route)
 import Apiary.Types (Request)
 import Data.Maybe (maybe)
+import Data.Newtype (unwrap)
 import Data.Symbol (class IsSymbol, SProxy(..), reflectSymbol)
 import Foreign.Object as Object
 import Type.Proxy (Proxy(..))
