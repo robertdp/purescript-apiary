@@ -121,12 +121,6 @@ Show Error
 Semigroup Error
 ```
 
-#### `Apiary`
-
-``` purescript
-type Apiary = Except Error
-```
-
 #### `emptyRequest`
 
 ``` purescript

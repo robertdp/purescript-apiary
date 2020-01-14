@@ -4,7 +4,7 @@
 
 ``` purescript
 class DecodeResponse rep response | rep -> response where
-  decodeResponse :: Proxy rep -> Response -> Apiary response
+  decodeResponse :: Proxy rep -> Response -> Except Error response
 ```
 
 ##### Instances
@@ -18,7 +18,7 @@ DecodeResponse String String
 
 ``` purescript
 class DecodeResponseVariant (response :: # Type) (responseList :: RowList) | responseList -> response where
-  decodeResponseVariant :: RLProxy responseList -> Response -> Apiary (Variant response)
+  decodeResponseVariant :: RLProxy responseList -> Response -> Except Error (Variant response)
 ```
 
 ##### Instances

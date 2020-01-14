@@ -35,7 +35,7 @@ data Error
 instance showError :: Show Error where
   show (RuntimeError err) = "(RuntimeError " <> show err <> ")"
   show (DecodeError err res) = "(DecodeError " <> show err <> " " <> show res <> ")"
-  show (UnexpectedResponse res) = "(RuntimeError " <> show res <> ")"
+  show (UnexpectedResponse res) = "(UnexpectedResponse " <> show res <> ")"
 
 instance semigroupError :: Semigroup Error where
   append err@(RuntimeError _) _ = err
@@ -43,6 +43,3 @@ instance semigroupError :: Semigroup Error where
   append err@(DecodeError _ _) _ = err
   append _ err@(DecodeError _ _) = err
   append err@(UnexpectedResponse _) _ = err
-
-type Apiary
-  = Except Error
