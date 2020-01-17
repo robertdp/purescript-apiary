@@ -50,6 +50,7 @@ data None :: Type
 
 ##### Instances
 ``` purescript
+Show None
 Semigroup None
 Monoid None
 MediaType None

@@ -23,6 +23,7 @@ data None :: Type
 
 ##### Instances
 ``` purescript
+Show None
 Semigroup None
 Monoid None
 MediaType None
@@ -34,7 +35,6 @@ DecodeMedia None None
 
 ``` purescript
 data JSON a
-  = JSON
 ```
 
 ##### Instances

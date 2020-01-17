@@ -1,4 +1,14 @@
-module Apiary.Media where
+module Apiary.Media
+  ( class DecodeMedia
+  , class EncodeMedia
+  , class MediaType
+  , JSON
+  , None
+  , decodeMedia
+  , encodeMedia
+  , mediaType
+  , none
+  ) where
 
 import Prelude
 import Data.Maybe (Maybe(..))
@@ -22,6 +32,9 @@ foreign import data None :: Type
 
 none :: None
 none = unsafeCoerce unit
+
+instance showNone :: Show None where
+  show _ = "none"
 
 instance semigroupNone :: Semigroup None where
   append _ _ = none
