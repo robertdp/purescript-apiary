@@ -113,13 +113,10 @@ instance readForeignVariantCons ::
   ) =>
   ReadForeignVariant (Cons name value rl) r where
   readForeignVariant _ o =
-    ( do
-        value :: value <- readImpl =<< readProp name o
-        pure $ Variant.inj proxy value
-    )
-      <|> readForeignVariant (RLProxy :: RLProxy rl) o
+    (Variant.inj proxy <$> (readProp name o >>= readImpl))
+      <|> readForeignVariant (RLProxy :: _ rl) o
     where
-    proxy = SProxy :: SProxy name
+    proxy = SProxy :: _ name
 
     name = reflectSymbol proxy
 
