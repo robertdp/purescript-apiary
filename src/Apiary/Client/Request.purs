@@ -22,7 +22,7 @@ class BuildRequest route params body rep | route -> params body rep where
 instance buildRequestRouteGET ::
   ( PrepareSpec
       spec
-      { params :: params
+      { path :: params
       , query :: query
       , body :: None
       , response :: response
@@ -36,7 +36,7 @@ instance buildRequestRouteGET ::
 else instance buildRequestRoutePATCH ::
   ( PrepareSpec
       spec
-      { params :: params
+      { path :: params
       , query :: query
       , body :: body
       , response :: response
@@ -52,7 +52,7 @@ else instance buildRequestRoutePATCH ::
 else instance buildRequestRoutePOST ::
   ( PrepareSpec
       spec
-      { params :: params
+      { path :: params
       , query :: query
       , body :: body
       , response :: response
@@ -68,7 +68,7 @@ else instance buildRequestRoutePOST ::
 else instance buildRequestRoutePUT ::
   ( PrepareSpec
       spec
-      { params :: params
+      { path :: params
       , query :: query
       , body :: body
       , response :: response
@@ -84,7 +84,7 @@ else instance buildRequestRoutePUT ::
 else instance buildRequestRouteDELETE ::
   ( PrepareSpec
       spec
-      { params :: params
+      { path :: params
       , query :: query
       , body :: body
       , response :: response

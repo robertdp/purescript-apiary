@@ -7,7 +7,7 @@ data Route (method :: Symbol) (path :: Symbol) spec
   = Route
 
 type SpecDefaults
-  = ( params :: {}
+  = ( path :: {}
     , query :: {}
     , body :: None
     , response :: None
