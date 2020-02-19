@@ -41,7 +41,7 @@ buildPath = replacePathParams (RLProxy :: _ paramList)
 class ReplacePathParams (params :: #Type) (paramList :: RowList) | paramList -> params where
   replacePathParams :: RLProxy paramList -> Record params -> String -> String
 
-instance replacePathParamsNil :: ReplacePathParams () Nil where
+instance replacePathParamsNil :: ReplacePathParams params Nil where
   replacePathParams _ _ = identity
 
 instance replacePathParamsCons ::
@@ -66,9 +66,13 @@ buildQuery query =
     # intercalate "&"
 
 class PrepareQueryParams (query :: #Type) (queryList :: RowList) | queryList -> query where
-  prepareQueryParams :: RLProxy queryList -> Record query -> (forall h. ST h (STArray h { name :: String, value :: String })) -> Array { name :: String, value :: String }
+  prepareQueryParams ::
+    RLProxy queryList ->
+    Record query ->
+    (forall h. ST h (STArray h { name :: String, value :: String })) ->
+    Array { name :: String, value :: String }
 
-instance prepareQueryParamsNil :: PrepareQueryParams () Nil where
+instance prepareQueryParamsNil :: PrepareQueryParams params Nil where
   prepareQueryParams _ _ builder = STArray.run builder
 
 instance prepareQueryParamsConsArray ::
