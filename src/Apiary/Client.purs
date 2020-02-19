@@ -20,18 +20,19 @@ import Milkis.Impl.Window (windowFetch)
 import Type.Proxy (Proxy(..))
 
 makeRequest ::
-  forall route params body rep response.
-  BuildRequest route params body rep =>
+  forall route params query body rep response.
+  BuildRequest route params query body rep =>
   DecodeResponse rep response =>
   route ->
   (Request -> Request) ->
   params ->
+  query ->
   body ->
   Aff (Either Error response)
-makeRequest route transform params body = runExceptT $ decode =<< fetch request
+makeRequest route transform params query body = runExceptT $ decode =<< fetch request
   where
   request :: Request
-  request = transform $ buildRequest route params body
+  request = transform $ buildRequest route params query body
 
   decode :: Response -> ExceptT Error Aff response
   decode text = mapExceptT (pure <<< extract) $ decodeResponse (Proxy :: _ rep) text
