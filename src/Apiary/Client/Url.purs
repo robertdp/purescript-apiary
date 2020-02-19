@@ -3,11 +3,12 @@ module Apiary.Client.Url where
 import Prelude
 import Apiary.Url as Url
 import Control.Monad.ST (ST)
+import Data.Array as Array
 import Data.Array.ST (STArray)
 import Data.Array.ST as STArray
 import Data.Either (either)
-import Data.Foldable (for_, intercalate)
-import Data.Maybe (Maybe)
+import Data.Foldable (class Foldable, intercalate)
+import Data.Maybe (Maybe(..))
 import Data.String as String
 import Data.String.Regex as Regex
 import Data.String.Regex.Flags as RegexFlags
@@ -78,10 +79,11 @@ instance prepareQueryParamsNil :: PrepareQueryParams params Nil where
 instance prepareQueryParamsConsArray ::
   ( IsSymbol name
   , Url.EncodeParam value
-  , Cons name (Array value) query' query
+  , Cons name (f value) query' query
+  , Foldable f
   , PrepareQueryParams query queryTail
   ) =>
-  PrepareQueryParams query (Cons name (Array value) queryTail) where
+  PrepareQueryParams query (Cons name (f value) queryTail) where
   prepareQueryParams _ query builder = do
     prepareQueryParams (RLProxy :: _ queryTail) query do
       array <- builder
@@ -92,22 +94,21 @@ instance prepareQueryParamsConsArray ::
 
     values =
       Record.get name query
+        # Array.fromFoldable
         # map \value -> { name: reflectSymbol name, value: Url.encodeParam value }
 else instance prepareQueryParamsCons ::
   ( IsSymbol name
   , Url.EncodeParam value
-  , Cons name (Maybe value) query' query
+  , Cons name value query' query
   , PrepareQueryParams query queryTail
   ) =>
   PrepareQueryParams query (Cons name value queryTail) where
   prepareQueryParams _ query builder = do
     prepareQueryParams (RLProxy :: _ queryTail) query do
       array <- builder
-      for_ value (flip STArray.push array)
+      _ <- STArray.push value array
       pure array
     where
     name = SProxy :: _ name
 
-    value =
-      Record.get name query
-        # map \v -> { name: reflectSymbol name, value: Url.encodeParam v }
+    value = { name: reflectSymbol name, value: Url.encodeParam $ Record.get name query }
