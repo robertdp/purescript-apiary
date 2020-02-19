@@ -8,7 +8,6 @@ import Data.Array.ST (STArray)
 import Data.Array.ST as STArray
 import Data.Either (either)
 import Data.Foldable (class Foldable, intercalate)
-import Data.Maybe (Maybe(..))
 import Data.String as String
 import Data.String.Regex as Regex
 import Data.String.Regex.Flags as RegexFlags
