@@ -6,9 +6,9 @@ module Apiary.Client.Request
 import Prelude
 import Apiary.Client.Response (class DecodeResponse)
 import Apiary.Client.Url (class BuildUrl, buildUrl)
-import Apiary.Media (class EncodeMedia, class MediaType, None, encodeMedia, mediaType)
+import Apiary.Media (class EncodeMedia, class MediaType, encodeMedia, mediaType)
 import Apiary.Route (class PrepareSpec, Route)
-import Apiary.Types (Request)
+import Apiary.Types (None, Request)
 import Data.Maybe (maybe)
 import Data.Newtype (unwrap)
 import Data.Symbol (class IsSymbol, SProxy(..), reflectSymbol)

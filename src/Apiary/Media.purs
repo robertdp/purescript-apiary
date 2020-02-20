@@ -3,21 +3,19 @@ module Apiary.Media
   , class EncodeMedia
   , class MediaType
   , JSON
-  , None
   , decodeMedia
   , encodeMedia
   , mediaType
-  , none
   ) where
 
 import Prelude
+import Apiary.Types (None, none)
 import Data.Maybe (Maybe(..))
 import Data.MediaType (MediaType)
 import Data.MediaType.Common (applicationJSON, textPlain)
 import Foreign (F)
 import Simple.JSON (class ReadForeign, class WriteForeign, readJSON', writeJSON)
 import Type.Proxy (Proxy)
-import Unsafe.Coerce (unsafeCoerce)
 
 class MediaType rep where
   mediaType :: Proxy rep -> Maybe MediaType
@@ -27,20 +25,6 @@ class EncodeMedia rep a | rep -> a where
 
 class DecodeMedia rep a | rep -> a where
   decodeMedia :: Proxy rep -> String -> F a
-
-foreign import data None :: Type
-
-none :: None
-none = unsafeCoerce unit
-
-instance showNone :: Show None where
-  show _ = "none"
-
-instance semigroupNone :: Semigroup None where
-  append _ _ = none
-
-instance monoidNone :: Monoid None where
-  mempty = none
 
 instance mediaTypeNone :: MediaType None where
   mediaType _ = Nothing

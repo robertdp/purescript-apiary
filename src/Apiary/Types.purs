@@ -4,6 +4,7 @@ import Prelude
 import Effect.Exception as Exception
 import Foreign (MultipleErrors)
 import Milkis (Headers, Method, URL(..), getMethod)
+import Unsafe.Coerce (unsafeCoerce)
 
 type Request
   = { method :: Method
@@ -42,3 +43,17 @@ instance semigroupError :: Semigroup Error where
   append err@(DecodeError _ _) _ = err
   append _ err@(DecodeError _ _) = err
   append err@(UnexpectedResponse _) _ = err
+
+foreign import data None :: Type
+
+none :: None
+none = unsafeCoerce unit
+
+instance showNone :: Show None where
+  show _ = "none"
+
+instance semigroupNone :: Semigroup None where
+  append _ _ = none
+
+instance monoidNone :: Monoid None where
+  mempty = none

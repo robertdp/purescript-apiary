@@ -1,10 +1,10 @@
 module Apiary.Client.Response where
 
 import Prelude
-import Apiary.Media (class DecodeMedia, None, decodeMedia, none)
+import Apiary.Media (class DecodeMedia, decodeMedia)
 import Apiary.Status (class ResponseStatus)
 import Apiary.Status as Status
-import Apiary.Types (Error(..), Response)
+import Apiary.Types (Error(..), None, Response, none)
 import Control.Alt ((<|>))
 import Control.Monad.Error.Class (throwError)
 import Control.Monad.Except (Except, withExcept)

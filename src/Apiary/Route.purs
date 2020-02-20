@@ -1,14 +1,14 @@
 module Apiary.Route where
 
-import Apiary.Media (None)
+import Apiary.Types (None)
 import Prim.Row (class Nub, class Union)
 
 data Route (method :: Symbol) (path :: Symbol) spec
   = Route
 
 type SpecDefaults
-  = ( path :: {}
-    , query :: {}
+  = ( path :: None
+    , query :: None
     , body :: None
     , response :: None
     )

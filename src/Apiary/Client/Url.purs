@@ -1,6 +1,7 @@
 module Apiary.Client.Url where
 
 import Prelude
+import Apiary.Types (None)
 import Apiary.Url as Url
 import Control.Monad.ST (ST)
 import Data.Array as Array
@@ -20,7 +21,7 @@ import Type.Data.RowList (RLProxy(..))
 class BuildUrl params query where
   buildUrl :: params -> query -> String -> String
 
-instance buildUrlRecord ::
+instance buildUrlPathAndQuery ::
   ( RowToList pathParams pathParamList
   , RowToList queryParams queryParamList
   , ReplacePathParams pathParams pathParamList
@@ -34,6 +35,17 @@ instance buildUrlRecord ::
     query = buildQuery queryParams
 
     prefix q = if String.null q then "" else "?" <> q
+else instance buildUrlPathOnly ::
+  (BuildUrl path {}) =>
+  BuildUrl path None where
+  buildUrl pathParams _ url = buildUrl pathParams {} url
+else instance buildUrlQueryOnly ::
+  (BuildUrl {} query) =>
+  BuildUrl None query where
+  buildUrl _ queryParams url = buildUrl {} queryParams url
+else instance buildUrlNone ::
+  BuildUrl None None where
+  buildUrl _ _ url = buildUrl {} {} url
 
 buildPath :: forall params paramList. RowToList params paramList => ReplacePathParams params paramList => { | params } -> String -> String
 buildPath = replacePathParams (RLProxy :: _ paramList)

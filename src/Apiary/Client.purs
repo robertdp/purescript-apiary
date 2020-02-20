@@ -8,8 +8,8 @@ module Apiary.Client
 import Prelude
 import Apiary.Client.Request (class BuildRequest, buildRequest)
 import Apiary.Client.Response (class DecodeResponse, decodeResponse)
-import Apiary.Media (class DecodeMedia, class EncodeMedia, class MediaType, JSON, None, decodeMedia, encodeMedia, mediaType, none)
-import Apiary.Types (Error(..), Request, Response, emptyRequest)
+import Apiary.Media (class DecodeMedia, class EncodeMedia, class MediaType, JSON, decodeMedia, encodeMedia, mediaType)
+import Apiary.Types (Error(..), None, Request, Response, emptyRequest, none)
 import Control.Comonad (extract)
 import Control.Monad.Error.Class (try)
 import Control.Monad.Except (ExceptT(..), mapExceptT, runExceptT, withExceptT)
