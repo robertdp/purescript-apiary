@@ -4,7 +4,7 @@ import Prelude
 import Apiary.Media (class DecodeMedia, decodeMedia)
 import Apiary.Status (class ResponseStatus)
 import Apiary.Status as Status
-import Apiary.Types (Error(..), None, Response, none)
+import Apiary.Types (Error(..), None, Response, Request, none)
 import Control.Alt ((<|>))
 import Control.Monad.Error.Class (throwError)
 import Control.Monad.Except (Except, withExcept)
@@ -16,7 +16,7 @@ import Type.Data.RowList (RLProxy(..))
 import Type.Proxy (Proxy(..))
 
 class DecodeResponse rep response | rep -> response where
-  decodeResponse :: Proxy rep -> Response -> Except Error response
+  decodeResponse :: Proxy rep -> Response -> Except (Request -> Error) response
 
 instance decodeResponseNone :: DecodeResponse None None where
   decodeResponse _ _ = pure none
@@ -32,11 +32,11 @@ instance decodeResponseRecord ::
   decodeResponse _ = decodeResponseVariant (RLProxy :: _ responseList)
 
 class DecodeResponseVariant (response :: #Type) (responseList :: RowList) | responseList -> response where
-  decodeResponseVariant :: RLProxy responseList -> Response -> Except Error (Variant response)
+  decodeResponseVariant :: RLProxy responseList -> Response -> Except (Request -> Error) (Variant response)
 
 instance decodeResponseVariantNil :: DecodeResponseVariant () Nil where
   -- | This will never be reached if the data originates from PureScript.
-  decodeResponseVariant _ = throwError <<< UnexpectedResponse
+  decodeResponseVariant _ = throwError <<< flip UnexpectedResponse
 
 instance decodeResponseVariantCons ::
   ( IsSymbol status
@@ -56,7 +56,7 @@ instance decodeResponseVariantCons ::
     statusCode = Status.statusCode (Status.toStatus status)
 
     decodeStatus
-      | response.status == statusCode = withExcept (flip DecodeError response) $ decodeMedia (Proxy :: _ rep) response.body
-      | otherwise = throwError $ UnexpectedResponse response
+      | response.status == statusCode = withExcept (\errs req -> DecodeError req response errs) $ decodeMedia (Proxy :: _ rep) response.body
+      | otherwise = throwError $ flip UnexpectedResponse response
 
     decodeRest = decodeResponseVariant (RLProxy :: _ responseList) response

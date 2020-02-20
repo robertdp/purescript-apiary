@@ -12,7 +12,7 @@ import Apiary.Media (class DecodeMedia, class EncodeMedia, class MediaType, JSON
 import Apiary.Types (Error(..), None, Request, Response, emptyRequest, none)
 import Control.Comonad (extract)
 import Control.Monad.Error.Class (try)
-import Control.Monad.Except (ExceptT(..), mapExceptT, runExceptT, withExceptT)
+import Control.Monad.Except (ExceptT(..), mapExceptT, runExceptT, withExcept, withExceptT)
 import Data.Either (Either)
 import Effect.Aff (Aff)
 import Milkis (fetch, headers, statusCode, text) as Milkis
@@ -35,7 +35,10 @@ makeRequest route transform params query body = runExceptT $ decode =<< fetch re
   request = transform $ buildRequest route params query body
 
   decode :: Response -> ExceptT Error Aff response
-  decode text = mapExceptT (pure <<< extract) $ decodeResponse (Proxy :: _ rep) text
+  decode text =
+    mapExceptT (pure <<< extract)
+      $ withExcept (_ $ request)
+      $ decodeResponse (Proxy :: _ rep) text
 
 lift :: Aff ~> ExceptT Error Aff
 lift = withExceptT RuntimeError <<< ExceptT <<< try

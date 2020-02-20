@@ -1,9 +1,11 @@
 module Apiary.Types where
 
 import Prelude
+import Data.Symbol (SProxy(..))
 import Effect.Exception as Exception
 import Foreign (MultipleErrors)
 import Milkis (Headers, Method, URL(..), getMethod)
+import Record as Record
 import Unsafe.Coerce (unsafeCoerce)
 
 type Request
@@ -29,20 +31,23 @@ type Response
 
 data Error
   = RuntimeError Exception.Error
-  | DecodeError MultipleErrors Response
-  | UnexpectedResponse Response
+  | DecodeError Request Response MultipleErrors
+  | UnexpectedResponse Request Response
+
+showRequest :: Request -> String
+showRequest = show <<< Record.modify (SProxy :: _ "method") (unsafeCoerce :: Method -> String)
 
 instance showError :: Show Error where
   show (RuntimeError err) = "(RuntimeError " <> show err <> ")"
-  show (DecodeError err res) = "(DecodeError " <> show err <> " " <> show res <> ")"
-  show (UnexpectedResponse res) = "(UnexpectedResponse " <> show res <> ")"
+  show (DecodeError req res err) = "(DecodeError " <> showRequest req <> " " <> show res <> " " <> show err <> ")"
+  show (UnexpectedResponse req res) = "(UnexpectedResponse " <> showRequest req <> " " <> show res <> ")"
 
 instance semigroupError :: Semigroup Error where
   append err@(RuntimeError _) _ = err
   append _ err@(RuntimeError _) = err
-  append err@(DecodeError _ _) _ = err
-  append _ err@(DecodeError _ _) = err
-  append err@(UnexpectedResponse _) _ = err
+  append err@(DecodeError _ _ _) _ = err
+  append _ err@(DecodeError _ _ _) = err
+  append err@(UnexpectedResponse _ _) _ = err
 
 foreign import data None :: Type
 
