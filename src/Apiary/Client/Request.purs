@@ -99,14 +99,14 @@ else instance buildRequestRouteDELETE ::
   buildRequest _ = buildRequest_ "DELETE" (SProxy :: _ path) (Proxy :: _ body)
 
 buildRequest_ ::
-  forall path params query bodyRep body.
+  forall path params query proxy bodyRep body.
   IsSymbol path =>
   BuildUrl params query =>
   MediaType bodyRep =>
   EncodeMedia bodyRep body =>
   String ->
   SProxy path ->
-  Proxy bodyRep ->
+  proxy bodyRep ->
   params ->
   query ->
   body ->

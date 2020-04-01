@@ -50,8 +50,8 @@ else instance buildUrlNone ::
 buildPath :: forall params paramList. RowToList params paramList => ReplacePathParams params paramList => { | params } -> String -> String
 buildPath = replacePathParams (RLProxy :: _ paramList)
 
-class ReplacePathParams (params :: #Type) (paramList :: RowList) | paramList -> params where
-  replacePathParams :: RLProxy paramList -> Record params -> String -> String
+class ReplacePathParams (params :: # Type) (paramList :: RowList) | paramList -> params where
+  replacePathParams :: forall proxy. proxy paramList -> Record params -> String -> String
 
 instance replacePathParamsNil :: ReplacePathParams params Nil where
   replacePathParams _ _ = identity
@@ -77,9 +77,10 @@ buildQuery query =
     # map (\{ name, value } -> Url.encodeParam name <> "=" <> value)
     # intercalate "&"
 
-class PrepareQueryParams (query :: #Type) (queryList :: RowList) | queryList -> query where
+class PrepareQueryParams (query :: # Type) (queryList :: RowList) | queryList -> query where
   prepareQueryParams ::
-    RLProxy queryList ->
+    forall proxy.
+    proxy queryList ->
     Record query ->
     (forall h. ST h (STArray h { name :: String, value :: String })) ->
     Array { name :: String, value :: String }

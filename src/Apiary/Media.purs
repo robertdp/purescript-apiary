@@ -15,16 +15,15 @@ import Data.MediaType (MediaType)
 import Data.MediaType.Common (applicationJSON, textPlain)
 import Foreign (F)
 import Simple.JSON (class ReadForeign, class WriteForeign, readJSON', writeJSON)
-import Type.Proxy (Proxy)
 
 class MediaType rep where
-  mediaType :: Proxy rep -> Maybe MediaType
+  mediaType :: forall proxy. proxy rep -> Maybe MediaType
 
 class EncodeMedia rep a | rep -> a where
-  encodeMedia :: Proxy rep -> a -> String
+  encodeMedia :: forall proxy. proxy rep -> a -> String
 
 class DecodeMedia rep a | rep -> a where
-  decodeMedia :: Proxy rep -> String -> F a
+  decodeMedia :: forall proxy. proxy rep -> String -> F a
 
 instance mediaTypeNone :: MediaType None where
   mediaType _ = Nothing
