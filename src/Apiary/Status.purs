@@ -1,11 +1,18 @@
 module Apiary.Status where
 
+import Prelude
 import Data.Symbol (SProxy(..))
 import Partial.Unsafe (unsafeCrashWith)
 import Prim.TypeError (class Fail, Beside, Text)
 
 newtype Status
   = Status { code :: Int, reason :: String }
+
+instance eqStatus :: Eq Status where
+  eq a b = statusCode a == statusCode b
+
+instance showStatus :: Show Status where
+  show (Status { code, reason }) = "(status " <> show code <> " " <> show reason <> ")"
 
 statusCode :: Status -> Int
 statusCode (Status { code }) = code
