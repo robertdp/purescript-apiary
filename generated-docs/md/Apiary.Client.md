@@ -3,7 +3,7 @@
 #### `makeRequest`
 
 ``` purescript
-makeRequest :: forall route params body rep response. BuildRequest route params body rep => DecodeResponse rep response => route -> (Request -> Request) -> params -> body -> Aff (Either Error response)
+makeRequest :: forall route params query body rep response. BuildRequest route params query body rep => DecodeResponse rep response => route -> (Request -> Request) -> params -> query -> body -> Aff (Either Error response)
 ```
 
 #### `fetch`
@@ -14,22 +14,6 @@ fetch :: Request -> ExceptT Error Aff Response
 
 
 ### Re-exported from Apiary.Media:
-
-#### `None`
-
-``` purescript
-data None :: Type
-```
-
-##### Instances
-``` purescript
-Show None
-Semigroup None
-Monoid None
-MediaType None
-EncodeMedia None None
-DecodeMedia None None
-```
 
 #### `JSON`
 
@@ -48,7 +32,7 @@ MediaType (JSON a)
 
 ``` purescript
 class DecodeMedia rep a | rep -> a where
-  decodeMedia :: Proxy rep -> String -> F a
+  decodeMedia :: forall proxy. proxy rep -> String -> F a
 ```
 
 ##### Instances
@@ -62,7 +46,7 @@ DecodeMedia String String
 
 ``` purescript
 class EncodeMedia rep a | rep -> a where
-  encodeMedia :: Proxy rep -> a -> String
+  encodeMedia :: forall proxy. proxy rep -> a -> String
 ```
 
 ##### Instances
@@ -76,7 +60,7 @@ EncodeMedia String String
 
 ``` purescript
 class MediaType rep  where
-  mediaType :: Proxy rep -> Maybe MediaType
+  mediaType :: forall proxy. proxy rep -> Maybe MediaType
 ```
 
 ##### Instances
@@ -84,12 +68,6 @@ class MediaType rep  where
 MediaType None
 MediaType String
 MediaType (JSON a)
-```
-
-#### `none`
-
-``` purescript
-none :: None
 ```
 
 ### Re-exported from Apiary.Types:
@@ -106,19 +84,38 @@ type Response = { body :: String, headers :: Headers, status :: Int }
 type Request = { body :: String, headers :: Headers, method :: Method, url :: URL }
 ```
 
+#### `None`
+
+``` purescript
+data None :: Type
+```
+
+##### Instances
+``` purescript
+Show None
+Semigroup None
+Monoid None
+```
+
 #### `Error`
 
 ``` purescript
 data Error
   = RuntimeError Error
-  | DecodeError MultipleErrors Response
-  | UnexpectedResponse Response
+  | DecodeError Request Response MultipleErrors
+  | UnexpectedResponse Request Response
 ```
 
 ##### Instances
 ``` purescript
 Show Error
 Semigroup Error
+```
+
+#### `none`
+
+``` purescript
+none :: None
 ```
 
 #### `emptyRequest`

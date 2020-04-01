@@ -1,42 +1,57 @@
 ## Module Apiary.Client.Url
 
-#### `WriteParams`
+#### `BuildUrl`
 
 ``` purescript
-class WriteParams pathParams queryParams params | pathParams queryParams -> params where
-  writeParams :: Proxy pathParams -> Proxy queryParams -> params -> String -> String
+class BuildUrl params query  where
+  buildUrl :: params -> query -> String -> String
 ```
 
 ##### Instances
 ``` purescript
-(Union pathParams queryParamRep dirtyParams, Nub dirtyParams mergedParams, RowToList pathParams pathParamList, RowToList queryParams queryParamList, WritePathParams pathParams pathParamList, BuildQueryParams queryParamRep queryParamList) => WriteParams (Record pathParams) (Record queryParams) (Record mergedParams)
+(RowToList pathParams pathParamList, RowToList queryParams queryParamList, ReplacePathParams pathParams pathParamList, PrepareQueryParams queryParams queryParamList) => BuildUrl (Record pathParams) (Record queryParams)
+(BuildUrl path (Record ())) => BuildUrl path None
+(BuildUrl (Record ()) query) => BuildUrl None query
+BuildUrl None None
 ```
 
-#### `WritePathParams`
+#### `buildPath`
 
 ``` purescript
-class WritePathParams (params :: # Type) (paramList :: RowList) | paramList -> params where
-  writePathParams :: RLProxy paramList -> Record params -> String -> String
+buildPath :: forall params paramList. RowToList params paramList => ReplacePathParams params paramList => Record params -> String -> String
 ```
 
-##### Instances
-``` purescript
-WritePathParams () Nil
-(IsSymbol name, EncodeParam value, Cons name value params' params, WritePathParams params' paramTail) => WritePathParams params (Cons name value paramTail)
-```
-
-#### `BuildQueryParams`
+#### `ReplacePathParams`
 
 ``` purescript
-class BuildQueryParams (params :: # Type) (paramList :: RowList) | paramList -> params where
-  buildQueryParams :: RLProxy paramList -> Record params -> Array (Tuple String String)
+class ReplacePathParams (params :: # Type) (paramList :: RowList) | paramList -> params where
+  replacePathParams :: forall proxy. proxy paramList -> Record params -> String -> String
 ```
 
 ##### Instances
 ``` purescript
-BuildQueryParams () Nil
-(IsSymbol name, EncodeParam value, Cons name (Array value) params' params, BuildQueryParams params' paramTail) => BuildQueryParams params (Cons name (Array value) paramTail)
-(IsSymbol name, EncodeParam value, Cons name (Maybe value) params' params, BuildQueryParams params' paramTail) => BuildQueryParams params (Cons name value paramTail)
+ReplacePathParams params Nil
+(IsSymbol name, EncodeParam value, Cons name value params' params, ReplacePathParams params paramTail) => ReplacePathParams params (Cons name value paramTail)
+```
+
+#### `buildQuery`
+
+``` purescript
+buildQuery :: forall query queryList. RowToList query queryList => PrepareQueryParams query queryList => Record query -> String
+```
+
+#### `PrepareQueryParams`
+
+``` purescript
+class PrepareQueryParams (query :: # Type) (queryList :: RowList) | queryList -> query where
+  prepareQueryParams :: forall proxy. proxy queryList -> Record query -> (forall h. ST h (STArray h { name :: String, value :: String })) -> Array { name :: String, value :: String }
+```
+
+##### Instances
+``` purescript
+PrepareQueryParams params Nil
+(IsSymbol name, EncodeParam value, Cons name (f value) query' query, Foldable f, PrepareQueryParams query queryTail) => PrepareQueryParams query (Cons name (f value) queryTail)
+(IsSymbol name, EncodeParam value, Cons name value query' query, PrepareQueryParams query queryTail) => PrepareQueryParams query (Cons name value queryTail)
 ```
 
 

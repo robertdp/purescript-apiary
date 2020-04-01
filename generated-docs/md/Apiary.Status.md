@@ -7,6 +7,12 @@ newtype Status
   = Status { code :: Int, reason :: String }
 ```
 
+##### Instances
+``` purescript
+Eq Status
+Show Status
+```
+
 #### `statusCode`
 
 ``` purescript

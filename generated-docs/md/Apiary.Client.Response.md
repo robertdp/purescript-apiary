@@ -4,7 +4,7 @@
 
 ``` purescript
 class DecodeResponse rep response | rep -> response where
-  decodeResponse :: Proxy rep -> Response -> Except Error response
+  decodeResponse :: forall proxy. proxy rep -> Response -> Except (Request -> Error) response
 ```
 
 ##### Instances
@@ -18,13 +18,32 @@ DecodeResponse String String
 
 ``` purescript
 class DecodeResponseVariant (response :: # Type) (responseList :: RowList) | responseList -> response where
-  decodeResponseVariant :: RLProxy responseList -> Response -> Except Error (Variant response)
+  decodeResponseVariant :: forall proxy. proxy responseList -> Response -> Except (Request -> Error) (Variant response)
 ```
 
 ##### Instances
 ``` purescript
 DecodeResponseVariant () Nil
 (IsSymbol status, ResponseStatus status, Cons status decoded variant' variant, DecodeResponseVariant variant' responseList, Union variant' a variant, DecodeMedia rep decoded) => DecodeResponseVariant variant (Cons status rep responseList)
+```
+
+#### `toStatus`
+
+``` purescript
+toStatus :: forall response responseList. RowToList response responseList => ResponseVariantToStatus response responseList => Variant response -> Status
+```
+
+#### `ResponseVariantToStatus`
+
+``` purescript
+class ResponseVariantToStatus (response :: # Type) (responseList :: RowList) | responseList -> response where
+  responseVariantToStatus :: forall proxy. proxy responseList -> Variant response -> Status
+```
+
+##### Instances
+``` purescript
+ResponseVariantToStatus response Nil
+(IsSymbol status, ResponseStatus status, Cons status body response' response, ResponseVariantToStatus response responseList) => ResponseVariantToStatus response (Cons status body responseList)
 ```
 
 

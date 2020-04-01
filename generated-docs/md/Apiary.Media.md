@@ -1,38 +1,10 @@
 ## Module Apiary.Media
 
-#### `MediaType`
-
-``` purescript
-class MediaType rep  where
-  mediaType :: Proxy rep -> Maybe MediaType
-```
-
-##### Instances
-``` purescript
-MediaType None
-MediaType String
-MediaType (JSON a)
-```
-
-#### `EncodeMedia`
-
-``` purescript
-class EncodeMedia rep a | rep -> a where
-  encodeMedia :: Proxy rep -> a -> String
-```
-
-##### Instances
-``` purescript
-EncodeMedia None None
-EncodeMedia String String
-(WriteForeign a) => EncodeMedia (JSON a) a
-```
-
 #### `DecodeMedia`
 
 ``` purescript
 class DecodeMedia rep a | rep -> a where
-  decodeMedia :: Proxy rep -> String -> F a
+  decodeMedia :: forall proxy. proxy rep -> String -> F a
 ```
 
 ##### Instances
@@ -42,33 +14,38 @@ DecodeMedia String String
 (ReadForeign a) => DecodeMedia (JSON a) a
 ```
 
-#### `None`
+#### `EncodeMedia`
 
 ``` purescript
-data None :: Type
+class EncodeMedia rep a | rep -> a where
+  encodeMedia :: forall proxy. proxy rep -> a -> String
 ```
 
 ##### Instances
 ``` purescript
-Show None
-Semigroup None
-Monoid None
-MediaType None
 EncodeMedia None None
-DecodeMedia None None
+EncodeMedia String String
+(WriteForeign a) => EncodeMedia (JSON a) a
 ```
 
-#### `none`
+#### `MediaType`
 
 ``` purescript
-none :: None
+class MediaType rep  where
+  mediaType :: forall proxy. proxy rep -> Maybe MediaType
+```
+
+##### Instances
+``` purescript
+MediaType None
+MediaType String
+MediaType (JSON a)
 ```
 
 #### `JSON`
 
 ``` purescript
 data JSON a
-  = JSON
 ```
 
 ##### Instances
