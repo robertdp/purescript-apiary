@@ -74,7 +74,7 @@ maintenanceInProgress = status 520 "Maintenance In Progress"
 _maintenanceInProgress = SProxy :: SProxy "maintenanceInProgress"
 
 class ResponseStatus (status :: Symbol) where
-  toStatus :: SProxy status -> Status
+  toStatus :: forall proxy. proxy status -> Status
 
 instance responseStatusOK :: ResponseStatus "ok" where
   toStatus _ = ok

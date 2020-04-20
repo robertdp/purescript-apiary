@@ -155,7 +155,7 @@ _maintenanceInProgress :: SProxy "maintenanceInProgress"
 
 ``` purescript
 class ResponseStatus (status :: Symbol)  where
-  toStatus :: SProxy status -> Status
+  toStatus :: forall proxy. proxy status -> Status
 ```
 
 ##### Instances
