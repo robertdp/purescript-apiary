@@ -1,11 +1,5 @@
 ## Module Apiary.Client.Response
 
-#### `extract`
-
-``` purescript
-extract :: forall status r a. IsSymbol status => ResponseStatus status => Cons status a () r => Variant r -> a
-```
-
 #### `DecodeResponse`
 
 ``` purescript

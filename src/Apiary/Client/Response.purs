@@ -10,15 +10,12 @@ import Control.Monad.Error.Class (throwError)
 import Control.Monad.Except (Except, withExcept)
 import Data.Maybe (isJust)
 import Data.Symbol (class IsSymbol)
-import Data.Variant (SProxy(..), Variant, case_, expand, inj, on, prj)
+import Data.Variant (SProxy(..), Variant, expand, inj, prj)
 import Partial.Unsafe (unsafeCrashWith)
 import Prim.Row (class Cons, class Union)
 import Prim.RowList (class RowToList, kind RowList, Cons, Nil)
 import Type.Data.RowList (RLProxy(..))
 import Type.Proxy (Proxy(..))
-
-extract :: forall status r a. IsSymbol status => ResponseStatus status => Cons status a () r => Variant r -> a
-extract = case_ # on (SProxy :: _ status) identity
 
 class DecodeResponse rep response | rep -> response where
   decodeResponse :: forall proxy. proxy rep -> Response -> Except (Request -> Error) response
