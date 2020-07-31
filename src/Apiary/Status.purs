@@ -68,6 +68,11 @@ conflict = status 409 "Conflict"
 
 _conflict = SProxy :: SProxy "conflict"
 
+unprocessableEntity :: Status
+unprocessableEntity = status 422 "Unprocessable Entity"
+
+_unprocessableEntity = SProxy :: SProxy "unprocessableEntity"
+
 maintenanceInProgress :: Status
 maintenanceInProgress = status 520 "Maintenance In Progress"
 
@@ -94,6 +99,8 @@ else instance responseStatusNotFound :: ResponseStatus "notFound" where
   toStatus _ = notFound
 else instance responseStatusConflict :: ResponseStatus "conflict" where
   toStatus _ = conflict
+else instance responseStatusUnprocessableEntity :: ResponseStatus "unprocessableEntity" where
+  toStatus _ = unprocessableEntity
 else instance responseStatusFail ::
   Fail (Beside (Text "Unsupported response status: ") (Text status)) =>
   ResponseStatus status where

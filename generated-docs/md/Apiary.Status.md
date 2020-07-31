@@ -139,6 +139,18 @@ conflict :: Status
 _conflict :: SProxy "conflict"
 ```
 
+#### `unprocessableEntity`
+
+``` purescript
+unprocessableEntity :: Status
+```
+
+#### `_unprocessableEntity`
+
+``` purescript
+_unprocessableEntity :: SProxy "unprocessableEntity"
+```
+
 #### `maintenanceInProgress`
 
 ``` purescript
@@ -169,6 +181,7 @@ ResponseStatus "unauthorized"
 ResponseStatus "forbidden"
 ResponseStatus "notFound"
 ResponseStatus "conflict"
+ResponseStatus "unprocessableEntity"
 (Fail (Beside (Text "Unsupported response status: ") (Text status))) => ResponseStatus status
 ```
 
