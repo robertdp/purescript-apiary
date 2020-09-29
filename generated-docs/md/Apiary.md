@@ -1,6 +1,24 @@
 ## Module Apiary
 
 
+### Re-exported from Affjax.RequestHeader:
+
+#### `RequestHeader`
+
+``` purescript
+data RequestHeader
+  = Accept MediaType
+  | ContentType MediaType
+  | RequestHeader String String
+```
+
+##### Instances
+``` purescript
+Eq RequestHeader
+Ord RequestHeader
+Show RequestHeader
+```
+
 ### Re-exported from Apiary.Client:
 
 #### `makeRequest`
@@ -70,6 +88,45 @@ class MediaType rep  where
 MediaType None
 MediaType String
 MediaType (JSON a)
+```
+
+### Re-exported from Apiary.Route:
+
+#### `Route`
+
+``` purescript
+data Route (method :: Symbol) (path :: Symbol) spec
+  = Route
+```
+
+#### `PUT`
+
+``` purescript
+type PUT = Route "PUT"
+```
+
+#### `POST`
+
+``` purescript
+type POST = Route "POST"
+```
+
+#### `PATCH`
+
+``` purescript
+type PATCH = Route "PATCH"
+```
+
+#### `GET`
+
+``` purescript
+type GET = Route "GET"
+```
+
+#### `DELETE`
+
+``` purescript
+type DELETE = Route "DELETE"
 ```
 
 ### Re-exported from Apiary.Types:

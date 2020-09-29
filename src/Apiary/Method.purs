@@ -1,14 +1,14 @@
 module Apiary.Method
-  ( class RequestMethod
+  ( module Data.HTTP.Method
+  , class RequestMethod
   , toMethod
   ) where
 
-import Prelude
 import Data.HTTP.Method (Method(..))
-import Data.Symbol (class IsSymbol, SProxy, reflectSymbol)
+import Data.HTTP.Method (Method(..)) as Data.HTTP.Method
+import Data.Symbol (SProxy)
 import Partial.Unsafe (unsafeCrashWith)
 import Prim.TypeError (class Fail, Beside, Text)
-import Unsafe.Coerce (unsafeCoerce)
 
 class RequestMethod (method :: Symbol) where
   toMethod :: SProxy method -> Method
@@ -27,6 +27,3 @@ else instance requestMethodFail ::
   Fail (Beside (Text "Unsupported request method: ") (Text method)) =>
   RequestMethod method where
   toMethod _ = unsafeCrashWith "impossible"
-
-coerceMethod :: forall method. IsSymbol method => SProxy method -> Method
-coerceMethod = unsafeCoerce <<< reflectSymbol
