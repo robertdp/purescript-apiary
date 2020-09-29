@@ -1,22 +1,18 @@
-module Apiary.Client
-  ( makeRequest
-  , fetch
-  , module Apiary.Media
-  , module Apiary.Types
-  ) where
+module Apiary.Client where
 
 import Prelude
+import Affjax (defaultRequest)
+import Affjax as Affjax
+import Affjax.RequestBody as RequestBody
+import Affjax.ResponseFormat as ResponseFormat
 import Apiary.Client.Request (class BuildRequest, buildRequest)
 import Apiary.Client.Response (class DecodeResponse, decodeResponse)
-import Apiary.Media (class DecodeMedia, class EncodeMedia, class MediaType, JSON, decodeMedia, encodeMedia, mediaType)
-import Apiary.Types (Error(..), None, Request, Response, emptyRequest, none)
+import Apiary.Types (Error(..), Request, Response)
 import Control.Comonad (extract)
-import Control.Monad.Error.Class (try)
 import Control.Monad.Except (ExceptT(..), mapExceptT, runExceptT, withExcept, withExceptT)
 import Data.Either (Either)
+import Data.Maybe (Maybe(..))
 import Effect.Aff (Aff)
-import Milkis (fetch, headers, statusCode, text) as Milkis
-import Milkis.Impl.Window (windowFetch)
 import Type.Proxy (Proxy(..))
 
 makeRequest ::
@@ -40,18 +36,22 @@ makeRequest route transform params query body = runExceptT $ decode =<< fetch re
       $ withExcept (_ $ request)
       $ decodeResponse (Proxy :: _ rep) text
 
-lift :: Aff ~> ExceptT Error Aff
-lift = withExceptT RuntimeError <<< ExceptT <<< try
-
 fetch :: Request -> ExceptT Error Aff Response
 fetch request@{ method, url, headers } = do
-  response <-
-    lift case request.body of
-      "" -> Milkis.fetch windowFetch url { method, headers }
-      body -> Milkis.fetch windowFetch url { method, headers, body }
-  text <- lift $ Milkis.text response
+  response <- withExceptT RuntimeError $ ExceptT $ Affjax.request internalRequest
   pure
-    { status: Milkis.statusCode response
-    , headers: Milkis.headers response
-    , body: text
+    { status: response.status
+    , headers: response.headers
+    , body: response.body
     }
+  where
+  internalRequest =
+    defaultRequest
+      { url = url
+      , headers = headers
+      , responseFormat = ResponseFormat.string
+      , content =
+        case request.body of
+          "" -> Nothing
+          body -> pure (RequestBody.String body)
+      }

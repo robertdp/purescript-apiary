@@ -8,13 +8,13 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "purescript": "^0.13.6",
+    "purescript": "^0.13.8",
     "purescript-psa": "^0.7.3",
-    "purty": "^6.1.1",
-    "spago": "^0.13.1"
+    "purty": "^6.2.0",
+    "spago": "^0.16.0"
   },
   "scripts": {
-    "build": "spago build && npm run docs",
+    "build": "spago build",
     "docs": "spago docs --format markdown"
   },
   "repository": {

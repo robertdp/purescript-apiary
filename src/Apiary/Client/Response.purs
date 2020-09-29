@@ -55,7 +55,7 @@ instance decodeResponseVariantCons ::
     where
     status = SProxy :: _ status
 
-    statusCode = Status.statusCode (Status.toStatus status)
+    statusCode = Status.toStatusCode (Status.toStatus status)
 
     decodeStatus
       | response.status == statusCode = withExcept (\errs req -> DecodeError req response errs) $ decodeMedia (Proxy :: _ rep) response.body

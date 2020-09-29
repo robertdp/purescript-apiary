@@ -4,15 +4,15 @@ module Apiary.Client.Request
   ) where
 
 import Prelude
+import Affjax.RequestHeader (RequestHeader(..))
 import Apiary.Client.Response (class DecodeResponse)
 import Apiary.Client.Url (class BuildUrl, buildUrl)
 import Apiary.Media (class EncodeMedia, class MediaType, encodeMedia, mediaType)
 import Apiary.Route (class PrepareSpec, Route)
 import Apiary.Types (None, Request)
+import Data.Array as Array
 import Data.Maybe (maybe)
-import Data.Newtype (unwrap)
 import Data.Symbol (class IsSymbol, SProxy(..), reflectSymbol)
-import Foreign.Object as Object
 import Type.Proxy (Proxy(..))
 import Unsafe.Coerce (unsafeCoerce)
 
@@ -114,6 +114,6 @@ buildRequest_ ::
 buildRequest_ method path bodyRep params query body =
   { method: unsafeCoerce method
   , url: unsafeCoerce (buildUrl params query (reflectSymbol path))
-  , headers: maybe Object.empty (Object.singleton "Content-Type" <<< unwrap) (mediaType bodyRep)
+  , headers: maybe [] (Array.singleton <<< ContentType) (mediaType bodyRep)
   , body: encodeMedia bodyRep body
   }
