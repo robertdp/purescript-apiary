@@ -120,12 +120,6 @@ Show Error
 Semigroup Error
 ```
 
-#### `showRequest`
-
-``` purescript
-showRequest :: Request -> String
-```
-
 #### `none`
 
 ``` purescript

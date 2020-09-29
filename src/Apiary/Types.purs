@@ -7,9 +7,7 @@ import Affjax.RequestHeader (RequestHeader)
 import Affjax.ResponseHeader (ResponseHeader)
 import Affjax.StatusCode (StatusCode)
 import Data.HTTP.Method (Method(..))
-import Data.Symbol (SProxy(..))
 import Foreign (MultipleErrors)
-import Record as Record
 import Unsafe.Coerce (unsafeCoerce)
 
 type URL
