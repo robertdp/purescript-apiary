@@ -41,13 +41,10 @@ data Error
   | DecodeError Request Response MultipleErrors
   | UnexpectedResponse Request Response
 
-showRequest :: Request -> String
-showRequest = show <<< Record.modify (SProxy :: _ "method") (unsafeCoerce :: Method -> String)
-
 instance showError :: Show Error where
-  show (RuntimeError err) = "(RuntimeError " <> show (Affajx.printError err) <> ")"
-  show (DecodeError req res err) = "(DecodeError " <> showRequest req <> " " <> show res <> " " <> show err <> ")"
-  show (UnexpectedResponse req res) = "(UnexpectedResponse " <> showRequest req <> " " <> show res <> ")"
+  show (RuntimeError err) = "(RuntimeError {- " <> Affajx.printError err <> " -} )"
+  show (DecodeError req res err) = "(DecodeError " <> show req <> " " <> show res <> " " <> show err <> ")"
+  show (UnexpectedResponse req res) = "(UnexpectedResponse " <> show req <> " " <> show res <> ")"
 
 instance semigroupError :: Semigroup Error where
   append err@(RuntimeError _) _ = err
