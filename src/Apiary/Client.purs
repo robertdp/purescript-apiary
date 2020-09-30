@@ -10,7 +10,7 @@ import Apiary.Client.Response (class DecodeResponse, decodeResponse)
 import Apiary.Types (Error(..), Request, Response)
 import Control.Comonad (extract)
 import Control.Monad.Except (ExceptT(..), mapExceptT, runExceptT, withExcept, withExceptT)
-import Data.Either (Either)
+import Data.Either (Either(..))
 import Data.Maybe (Maybe(..))
 import Effect.Aff (Aff)
 import Type.Proxy (Proxy(..))
@@ -38,20 +38,22 @@ makeRequest route transform params query body = runExceptT $ decode =<< fetch re
 
 fetch :: Request -> ExceptT Error Aff Response
 fetch request@{ method, url, headers } = do
-  response <- withExceptT RuntimeError $ ExceptT $ Affjax.request internalRequest
+  response <- withExceptT RuntimeError $ ExceptT runRequest
   pure
     { status: response.status
     , headers: response.headers
     , body: response.body
     }
   where
-  internalRequest =
-    defaultRequest
-      { url = url
-      , headers = headers
-      , responseFormat = ResponseFormat.string
-      , content =
-        case request.body of
-          "" -> Nothing
-          body -> pure (RequestBody.String body)
-      }
+  runRequest =
+    Affjax.request
+      $ defaultRequest
+          { method = Left method
+          , url = url
+          , headers = headers
+          , responseFormat = ResponseFormat.string
+          , content =
+            case request.body of
+              "" -> Nothing
+              body -> pure (RequestBody.String body)
+          }
