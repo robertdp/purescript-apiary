@@ -5,8 +5,8 @@ import Affjax (defaultRequest)
 import Affjax as Affjax
 import Affjax.RequestBody as RequestBody
 import Affjax.ResponseFormat as ResponseFormat
-import Apiary.Client.Request (class BuildRequest, buildRequest)
-import Apiary.Client.Response (class DecodeResponse, decodeResponse)
+import Apiary.Request (class BuildRequest, buildRequest)
+import Apiary.Response (class DecodeResponse, decodeResponse)
 import Apiary.Types (Error(..), Request, Response)
 import Control.Comonad (extract)
 import Control.Monad.Except (ExceptT(..), mapExceptT, runExceptT, withExcept, withExceptT)

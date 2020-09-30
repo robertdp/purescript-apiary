@@ -1,22 +1,88 @@
-module Apiary.Client.Url where
+module Apiary.Request
+  ( class BuildRequest
+  , buildRequest
+  ) where
 
 import Prelude
-import Apiary.Types (None)
+import Affjax.RequestHeader (RequestHeader(..))
+import Apiary.Response (class DecodeResponse)
+import Apiary.Media (class EncodeMedia, class MediaType, encodeMedia, mediaType)
+import Apiary.Method (class RequestMethod, toMethod)
+import Apiary.Route (class PrepareSpec, Route)
+import Apiary.Types (None, Request)
 import Apiary.Url as Url
 import Control.Monad.ST (ST)
+import Data.Array (intercalate)
 import Data.Array as Array
-import Data.Array.ST (STArray)
 import Data.Array.ST as STArray
 import Data.Either (either)
-import Data.Foldable (class Foldable, intercalate)
+import Data.Foldable (class Foldable)
+import Data.Maybe (maybe)
 import Data.String as String
 import Data.String.Regex as Regex
 import Data.String.Regex.Flags as RegexFlags
 import Data.Symbol (class IsSymbol, SProxy(..), reflectSymbol)
 import Prim.Row (class Cons)
-import Prim.RowList (kind RowList, class RowToList, Cons, Nil)
+import Prim.RowList (class RowToList, Cons, Nil, kind RowList)
 import Record as Record
 import Type.Data.RowList (RLProxy(..))
+import Type.Proxy (Proxy(..))
+
+class BuildRequest route params query body rep | route -> params query body rep where
+  buildRequest :: route -> params -> query -> body -> Request
+
+instance buildRequestRouteGET ::
+  ( PrepareSpec
+      spec
+      { path :: params
+      , query :: query
+      , body :: None
+      , response :: response
+      }
+  , BuildUrl params query
+  , DecodeResponse response response'
+  , IsSymbol path
+  ) =>
+  BuildRequest (Route "GET" path spec) params query None response where
+  buildRequest _ = buildRequest_ (SProxy :: _ "GET") (SProxy :: _ path) (Proxy :: _ None)
+else instance buildRequestRouteRest ::
+  ( PrepareSpec
+      spec
+      { path :: params
+      , query :: query
+      , body :: body
+      , response :: response
+      }
+  , RequestMethod method
+  , BuildUrl params query
+  , MediaType body
+  , EncodeMedia body body'
+  , DecodeResponse response response'
+  , IsSymbol path
+  ) =>
+  BuildRequest (Route method path spec) params query body' response where
+  buildRequest _ = buildRequest_ (SProxy :: _ method) (SProxy :: _ path) (Proxy :: _ body)
+
+buildRequest_ ::
+  forall method path params query proxy bodyRep body.
+  RequestMethod method =>
+  IsSymbol path =>
+  BuildUrl params query =>
+  MediaType bodyRep =>
+  EncodeMedia bodyRep body =>
+  SProxy method ->
+  SProxy path ->
+  proxy bodyRep ->
+  params ->
+  query ->
+  body ->
+  Request
+buildRequest_ method path bodyRep params query body =
+  { method: toMethod method
+  , url: buildUrl params query (reflectSymbol path)
+  , headers: maybe [] (Array.singleton <<< ContentType) (mediaType bodyRep)
+  , body: encodeMedia bodyRep body
+  }
 
 class BuildUrl params query where
   buildUrl :: params -> query -> String -> String
@@ -82,7 +148,7 @@ class PrepareQueryParams (query :: # Type) (queryList :: RowList) | queryList ->
     forall proxy.
     proxy queryList ->
     Record query ->
-    (forall h. ST h (STArray h { name :: String, value :: String })) ->
+    (forall h. ST h (STArray.STArray h { name :: String, value :: String })) ->
     Array { name :: String, value :: String }
 
 instance prepareQueryParamsNil :: PrepareQueryParams params Nil where

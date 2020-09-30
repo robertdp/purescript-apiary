@@ -90,6 +90,37 @@ MediaType String
 MediaType (JSON a)
 ```
 
+### Re-exported from Apiary.Request:
+
+#### `BuildRequest`
+
+``` purescript
+class BuildRequest route params query body rep | route -> params query body rep where
+  buildRequest :: route -> params -> query -> body -> Request
+```
+
+### Re-exported from Apiary.Response:
+
+#### `DecodeResponse`
+
+``` purescript
+class DecodeResponse rep response | rep -> response where
+  decodeResponse :: forall proxy. proxy rep -> Response -> Except (Request -> Error) response
+```
+
+##### Instances
+``` purescript
+DecodeResponse None None
+DecodeResponse String String
+(RowToList responses responseList, DecodeResponseVariant result responseList) => DecodeResponse (Record responses) (Variant result)
+```
+
+#### `toStatus`
+
+``` purescript
+toStatus :: forall response responseList. RowToList response responseList => ResponseVariantToStatus response responseList => Variant response -> Status
+```
+
 ### Re-exported from Apiary.Route:
 
 #### `Route`
@@ -187,5 +218,37 @@ none :: None
 
 ``` purescript
 emptyRequest :: Request
+```
+
+### Re-exported from Apiary.Url:
+
+#### `DecodeParam`
+
+``` purescript
+class DecodeParam a  where
+  decodeParam :: String -> F a
+```
+
+##### Instances
+``` purescript
+DecodeParam String
+DecodeParam Boolean
+DecodeParam Int
+DecodeParam Number
+```
+
+#### `EncodeParam`
+
+``` purescript
+class EncodeParam a  where
+  encodeParam :: a -> String
+```
+
+##### Instances
+``` purescript
+EncodeParam String
+EncodeParam Boolean
+EncodeParam Int
+EncodeParam Number
 ```
 

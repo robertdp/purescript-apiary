@@ -39,12 +39,6 @@ Show Error
 Semigroup Error
 ```
 
-#### `showRequest`
-
-``` purescript
-showRequest :: Request -> String
-```
-
 #### `None`
 
 ``` purescript
