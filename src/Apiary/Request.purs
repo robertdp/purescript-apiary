@@ -1,6 +1,14 @@
 module Apiary.Request
   ( class BuildRequest
+  , class BuildUrl
+  , class PrepareQueryParams
+  , class ReplacePathParams
+  , buildPath
+  , buildQuery
   , buildRequest
+  , buildUrl
+  , prepareQueryParams
+  , replacePathParams
   ) where
 
 import Prelude

@@ -12,7 +12,7 @@ module Apiary
 import Affjax.RequestHeader (RequestHeader(..)) as Affjax.RequestHeader
 import Apiary.Client (fetch, makeRequest) as Client
 import Apiary.Media (class DecodeMedia, class EncodeMedia, class MediaType, JSON, decodeMedia, encodeMedia, mediaType) as Media
-import Apiary.Request (class BuildRequest, buildRequest) as Request
+import Apiary.Request (class BuildRequest, class BuildUrl, class PrepareQueryParams, class ReplacePathParams, buildPath, buildQuery, buildRequest, buildUrl) as Request
 import Apiary.Response (class DecodeResponse, decodeResponse, toStatus) as Response
 import Apiary.Route (DELETE, GET, PATCH, POST, PUT, Route(..)) as Route
 import Apiary.Types (Error(..), None, Request, Response, URL, emptyRequest, none) as Types
