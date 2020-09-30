@@ -1,7 +1,6 @@
 module Apiary.Types where
 
 import Prelude
-import Affjax as Affajx
 import Affjax as Affjax
 import Affjax.RequestHeader (RequestHeader)
 import Affjax.ResponseHeader (ResponseHeader)
@@ -40,7 +39,7 @@ data Error
   | UnexpectedResponse Request Response
 
 instance showError :: Show Error where
-  show (RuntimeError err) = "(RuntimeError {- " <> Affajx.printError err <> " -} )"
+  show (RuntimeError err) = "(RuntimeError {- " <> Affjax.printError err <> " -} )"
   show (DecodeError req res err) = "(DecodeError " <> show req <> " " <> show res <> " " <> show err <> ")"
   show (UnexpectedResponse req res) = "(UnexpectedResponse " <> show req <> " " <> show res <> ")"
 
