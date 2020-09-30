@@ -1,12 +1,4 @@
-module Apiary.Media
-  ( class DecodeMedia
-  , class EncodeMedia
-  , class MediaType
-  , JSON
-  , decodeMedia
-  , encodeMedia
-  , mediaType
-  ) where
+module Apiary.Media where
 
 import Prelude
 import Apiary.Types (None, none)

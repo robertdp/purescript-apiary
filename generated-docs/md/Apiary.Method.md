@@ -18,3 +18,34 @@ RequestMethod "DELETE"
 ```
 
 
+### Re-exported from Data.HTTP.Method:
+
+#### `Method`
+
+``` purescript
+data Method
+  = OPTIONS
+  | GET
+  | HEAD
+  | POST
+  | PUT
+  | DELETE
+  | TRACE
+  | CONNECT
+  | PROPFIND
+  | PROPPATCH
+  | MKCOL
+  | COPY
+  | MOVE
+  | LOCK
+  | UNLOCK
+  | PATCH
+```
+
+##### Instances
+``` purescript
+Eq Method
+Ord Method
+Show Method
+```
+

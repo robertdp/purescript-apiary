@@ -1,6 +1,7 @@
 module Apiary.Status where
 
 import Prelude
+import Affjax.StatusCode (StatusCode(..))
 import Data.Symbol (SProxy(..))
 import Partial.Unsafe (unsafeCrashWith)
 import Prim.TypeError (class Fail, Beside, Text)
@@ -9,19 +10,22 @@ newtype Status
   = Status { code :: Int, reason :: String }
 
 instance eqStatus :: Eq Status where
-  eq a b = statusCode a == statusCode b
+  eq a b = code a == code b
 
 instance showStatus :: Show Status where
-  show (Status { code, reason }) = "(status " <> show code <> " " <> show reason <> ")"
+  show (Status s) = "(status " <> show s.code <> " " <> show s.reason <> ")"
 
-statusCode :: Status -> Int
-statusCode (Status { code }) = code
+code :: Status -> Int
+code (Status s) = s.code
 
-statusReason :: Status -> String
-statusReason (Status { reason }) = reason
+reason :: Status -> String
+reason (Status s) = s.reason
+
+toStatusCode :: Status -> StatusCode
+toStatusCode (Status s) = StatusCode s.code
 
 status :: Int -> String -> Status
-status code reason = Status { code, reason }
+status c r = Status { code: c, reason: r }
 
 ok :: Status
 ok = status 200 "OK"

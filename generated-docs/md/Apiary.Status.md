@@ -13,16 +13,22 @@ Eq Status
 Show Status
 ```
 
-#### `statusCode`
+#### `code`
 
 ``` purescript
-statusCode :: Status -> Int
+code :: Status -> Int
 ```
 
-#### `statusReason`
+#### `reason`
 
 ``` purescript
-statusReason :: Status -> String
+reason :: Status -> String
+```
+
+#### `toStatusCode`
+
+``` purescript
+toStatusCode :: Status -> StatusCode
 ```
 
 #### `status`

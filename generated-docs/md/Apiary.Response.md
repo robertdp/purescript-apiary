@@ -1,4 +1,4 @@
-## Module Apiary.Client.Response
+## Module Apiary.Response
 
 #### `DecodeResponse`
 

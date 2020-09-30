@@ -1,9 +1,15 @@
 ## Module Apiary.Types
 
+#### `URL`
+
+``` purescript
+type URL = String
+```
+
 #### `Request`
 
 ``` purescript
-type Request = { body :: String, headers :: Headers, method :: Method, url :: URL }
+type Request = { body :: String, headers :: Array RequestHeader, method :: Method, url :: URL }
 ```
 
 #### `emptyRequest`
@@ -15,7 +21,7 @@ emptyRequest :: Request
 #### `Response`
 
 ``` purescript
-type Response = { body :: String, headers :: Headers, status :: Int }
+type Response = { body :: String, headers :: Array ResponseHeader, status :: StatusCode }
 ```
 
 #### `Error`
@@ -31,12 +37,6 @@ data Error
 ``` purescript
 Show Error
 Semigroup Error
-```
-
-#### `showRequest`
-
-``` purescript
-showRequest :: Request -> String
 ```
 
 #### `None`
