@@ -37,7 +37,7 @@ makeRequest route transform params query body = runExceptT $ decode =<< fetch re
       $ decodeResponse (Proxy :: _ rep) text
 
 fetch :: Request -> ExceptT Error Aff Response
-fetch request@{ method, url, headers } = do
+fetch { method, url, headers, body } = do
   response <- withExceptT RuntimeError $ ExceptT runRequest
   pure
     { status: response.status
@@ -53,7 +53,7 @@ fetch request@{ method, url, headers } = do
           , headers = headers
           , responseFormat = ResponseFormat.string
           , content =
-            case request.body of
+            case body of
               "" -> Nothing
-              body -> pure (RequestBody.String body)
+              body' -> pure (RequestBody.String body')
           }
