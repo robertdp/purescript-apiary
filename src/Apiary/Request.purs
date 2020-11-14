@@ -13,9 +13,9 @@ module Apiary.Request
 
 import Prelude
 import Affjax.RequestHeader (RequestHeader(..))
-import Apiary.Response (class DecodeResponse)
 import Apiary.Media (class EncodeMedia, class MediaType, encodeMedia, mediaType)
 import Apiary.Method (class RequestMethod, toMethod)
+import Apiary.Response (class DecodeResponse)
 import Apiary.Route (class PrepareSpec, Route)
 import Apiary.Types (None, Request)
 import Apiary.Url as Url
@@ -24,8 +24,7 @@ import Data.Array (intercalate)
 import Data.Array as Array
 import Data.Array.ST as STArray
 import Data.Either (either)
-import Data.Foldable (class Foldable)
-import Data.Maybe (maybe)
+import Data.Maybe (Maybe, maybe)
 import Data.String as String
 import Data.String.Regex as Regex
 import Data.String.Regex.Flags as RegexFlags
@@ -165,11 +164,10 @@ instance prepareQueryParamsNil :: PrepareQueryParams params Nil where
 instance prepareQueryParamsConsArray ::
   ( IsSymbol name
   , Url.EncodeParam value
-  , Cons name (f value) query' query
-  , Foldable f
+  , Cons name (Maybe value) query' query
   , PrepareQueryParams query queryTail
   ) =>
-  PrepareQueryParams query (Cons name (f value) queryTail) where
+  PrepareQueryParams query (Cons name (Maybe value) queryTail) where
   prepareQueryParams _ query builder = do
     prepareQueryParams (RLProxy :: _ queryTail) query do
       array <- builder
@@ -180,8 +178,11 @@ instance prepareQueryParamsConsArray ::
 
     values =
       Record.get name query
-        # Array.fromFoldable
-        # map \value -> { name: reflectSymbol name, value: Url.encodeParam value }
+        # maybe [] \value ->
+            Array.singleton
+              { name: reflectSymbol name
+              , value: Url.encodeParam value
+              }
 else instance prepareQueryParamsCons ::
   ( IsSymbol name
   , Url.EncodeParam value
@@ -197,4 +198,7 @@ else instance prepareQueryParamsCons ::
     where
     name = SProxy :: _ name
 
-    value = { name: reflectSymbol name, value: Url.encodeParam $ Record.get name query }
+    value =
+      { name: reflectSymbol name
+      , value: Url.encodeParam (Record.get name query)
+      }
