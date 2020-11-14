@@ -24,6 +24,7 @@ import Data.Array (intercalate)
 import Data.Array as Array
 import Data.Array.ST as STArray
 import Data.Either (either)
+import Data.Foldable (traverse_)
 import Data.Maybe (Maybe, maybe)
 import Data.String as String
 import Data.String.Regex as Regex
@@ -170,15 +171,14 @@ instance prepareQueryParamsConsArray ::
   prepareQueryParams _ query builder = do
     prepareQueryParams (RLProxy :: _ queryTail) query do
       array <- builder
-      _ <- STArray.pushAll values array
+      traverse_ (flip STArray.push array) value
       pure array
     where
     name = SProxy :: _ name
 
-    values =
+    value =
       Record.get name query
-        # maybe [] \value ->
-            [ Url.encodeParam (reflectSymbol name) <> "=" <> Url.encodeParam value ]
+        # map \x -> Url.encodeParam (reflectSymbol name) <> "=" <> Url.encodeParam x
 else instance prepareQueryParamsCons ::
   ( IsSymbol name
   , Url.EncodeParam value
