@@ -178,7 +178,7 @@ instance prepareQueryParamsConsArray ::
 
     value =
       Record.get name query
-        # map \x -> Url.encodeParam (reflectSymbol name) <> "=" <> Url.encodeParam x
+        # map \v -> Url.encodeParam (reflectSymbol name) <> "=" <> Url.encodeParam v
 else instance prepareQueryParamsCons ::
   ( IsSymbol name
   , Url.EncodeParam value
