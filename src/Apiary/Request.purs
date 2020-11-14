@@ -13,9 +13,9 @@ module Apiary.Request
 
 import Prelude
 import Affjax.RequestHeader (RequestHeader(..))
-import Apiary.Response (class DecodeResponse)
 import Apiary.Media (class EncodeMedia, class MediaType, encodeMedia, mediaType)
 import Apiary.Method (class RequestMethod, toMethod)
+import Apiary.Response (class DecodeResponse)
 import Apiary.Route (class PrepareSpec, Route)
 import Apiary.Types (None, Request)
 import Apiary.Url as Url
@@ -24,8 +24,8 @@ import Data.Array (intercalate)
 import Data.Array as Array
 import Data.Array.ST as STArray
 import Data.Either (either)
-import Data.Foldable (class Foldable)
-import Data.Maybe (maybe)
+import Data.Foldable (traverse_)
+import Data.Maybe (Maybe, maybe)
 import Data.String as String
 import Data.String.Regex as Regex
 import Data.String.Regex.Flags as RegexFlags
@@ -148,7 +148,6 @@ instance replacePathParamsCons ::
 buildQuery :: forall query queryList. RowToList query queryList => PrepareQueryParams query queryList => { | query } -> String
 buildQuery query =
   prepareQueryParams (RLProxy :: _ queryList) query STArray.empty
-    # map (\{ name, value } -> Url.encodeParam name <> "=" <> value)
     # intercalate "&"
 
 class PrepareQueryParams (query :: # Type) (queryList :: RowList) | queryList -> query where
@@ -156,8 +155,8 @@ class PrepareQueryParams (query :: # Type) (queryList :: RowList) | queryList ->
     forall proxy.
     proxy queryList ->
     Record query ->
-    (forall h. ST h (STArray.STArray h { name :: String, value :: String })) ->
-    Array { name :: String, value :: String }
+    (forall h. ST h (STArray.STArray h String)) ->
+    Array String
 
 instance prepareQueryParamsNil :: PrepareQueryParams params Nil where
   prepareQueryParams _ _ builder = STArray.run builder
@@ -165,23 +164,21 @@ instance prepareQueryParamsNil :: PrepareQueryParams params Nil where
 instance prepareQueryParamsConsArray ::
   ( IsSymbol name
   , Url.EncodeParam value
-  , Cons name (f value) query' query
-  , Foldable f
+  , Cons name (Maybe value) query' query
   , PrepareQueryParams query queryTail
   ) =>
-  PrepareQueryParams query (Cons name (f value) queryTail) where
+  PrepareQueryParams query (Cons name (Maybe value) queryTail) where
   prepareQueryParams _ query builder = do
     prepareQueryParams (RLProxy :: _ queryTail) query do
       array <- builder
-      _ <- STArray.pushAll values array
+      traverse_ (flip STArray.push array) value
       pure array
     where
     name = SProxy :: _ name
 
-    values =
+    value =
       Record.get name query
-        # Array.fromFoldable
-        # map \value -> { name: reflectSymbol name, value: Url.encodeParam value }
+        # map \v -> Url.encodeParam (reflectSymbol name) <> "=" <> Url.encodeParam v
 else instance prepareQueryParamsCons ::
   ( IsSymbol name
   , Url.EncodeParam value
@@ -197,4 +194,4 @@ else instance prepareQueryParamsCons ::
     where
     name = SProxy :: _ name
 
-    value = { name: reflectSymbol name, value: Url.encodeParam $ Record.get name query }
+    value = Url.encodeParam (reflectSymbol name) <> "=" <> Url.encodeParam (Record.get name query)
