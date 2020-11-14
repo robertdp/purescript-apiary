@@ -147,7 +147,6 @@ instance replacePathParamsCons ::
 buildQuery :: forall query queryList. RowToList query queryList => PrepareQueryParams query queryList => { | query } -> String
 buildQuery query =
   prepareQueryParams (RLProxy :: _ queryList) query STArray.empty
-    # map (\{ name, value } -> Url.encodeParam name <> "=" <> value)
     # intercalate "&"
 
 class PrepareQueryParams (query :: # Type) (queryList :: RowList) | queryList -> query where
@@ -155,8 +154,8 @@ class PrepareQueryParams (query :: # Type) (queryList :: RowList) | queryList ->
     forall proxy.
     proxy queryList ->
     Record query ->
-    (forall h. ST h (STArray.STArray h { name :: String, value :: String })) ->
-    Array { name :: String, value :: String }
+    (forall h. ST h (STArray.STArray h String)) ->
+    Array String
 
 instance prepareQueryParamsNil :: PrepareQueryParams params Nil where
   prepareQueryParams _ _ builder = STArray.run builder
@@ -179,10 +178,7 @@ instance prepareQueryParamsConsArray ::
     values =
       Record.get name query
         # maybe [] \value ->
-            Array.singleton
-              { name: reflectSymbol name
-              , value: Url.encodeParam value
-              }
+            Array.singleton (Url.encodeParam (reflectSymbol name) <> "=" <> Url.encodeParam value)
 else instance prepareQueryParamsCons ::
   ( IsSymbol name
   , Url.EncodeParam value
@@ -198,7 +194,4 @@ else instance prepareQueryParamsCons ::
     where
     name = SProxy :: _ name
 
-    value =
-      { name: reflectSymbol name
-      , value: Url.encodeParam (Record.get name query)
-      }
+    value = Url.encodeParam (reflectSymbol name) <> "=" <> Url.encodeParam (Record.get name query)
